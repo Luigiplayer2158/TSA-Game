@@ -3,6 +3,11 @@ package com.darkduckdevelopers.shaders;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 
+/**
+ * The main shader for rendering entities
+ * 
+ * @author Zachary
+ */
 public class Shader extends ShaderProgram {
 
 	private int location_transformationMatrix;
@@ -15,11 +20,15 @@ public class Shader extends ShaderProgram {
 		super(vertex, fragment);
 	}
 
+	// See ShaderProgram
 	@Override
 	protected void bindAttributes() {
 		super.bindAttribute(0, "position");
 	}
 
+	/**
+	 * Get the integer location of all uniform variables
+	 */
 	@Override
 	protected void getAllUniformLocations() {
 		location_transformationMatrix = super
@@ -29,6 +38,11 @@ public class Shader extends ShaderProgram {
 		location_numberOfRows = super.getUniformLocation("numberOfRows");
 		location_offset = super.getUniformLocation("offset");
 	}
+
+	/*
+	 * All of the below methods should be self explanatory. They load a Java
+	 * value into the shader via uniform variables.
+	 */
 
 	public void loadNumberOfRows(int numberOfRows) {
 		super.loadFloat(location_numberOfRows, numberOfRows);
@@ -41,11 +55,11 @@ public class Shader extends ShaderProgram {
 	public void loadTransformationMatrix(Matrix4f matrix) {
 		super.loadMatrix(location_transformationMatrix, matrix);
 	}
-	
+
 	public void loadViewMatrix(Matrix4f matrix) {
 		super.loadMatrix(location_viewMatrix, matrix);
 	}
-	
+
 	public void loadUseVM(boolean useVM) {
 		super.loadBoolean(location_useVM, useVM);
 	}
