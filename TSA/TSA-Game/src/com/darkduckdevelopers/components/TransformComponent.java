@@ -2,8 +2,14 @@ package com.darkduckdevelopers.components;
 
 import org.lwjgl.util.vector.Vector2f;
 
-public class TransformComponent extends BaseComponent {
-	
+/**
+ * This isn't actually a component. It stores positional data of an entity for
+ * use by other components.
+ * 
+ * @author Zachary
+ */
+public class TransformComponent {
+
 	public Vector2f position;
 	public Vector2f size;
 	public float rotation;
@@ -12,10 +18,6 @@ public class TransformComponent extends BaseComponent {
 		this.position = position;
 		this.rotation = rotation;
 		this.size = size;
-	}
-	
-	@Override
-	public void tick() {
 	}
 
 }

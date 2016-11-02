@@ -2,14 +2,12 @@ package com.darkduckdevelopers.main;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector2f;
 
 import com.darkduckdevelopers.components.CameraComponent;
-import com.darkduckdevelopers.components.PlayerComponent;
 import com.darkduckdevelopers.components.PositionalAnchorComponent;
 import com.darkduckdevelopers.components.RenderComponent;
 import com.darkduckdevelopers.components.TransformComponent;
@@ -23,19 +21,27 @@ import com.darkduckdevelopers.util.AudioMaster;
 import com.darkduckdevelopers.util.PropertiesFile;
 import com.darkduckdevelopers.util.Text;
 
+/**
+ * The main class of our game
+ * 
+ * @author Zachary
+ */
 public class MainGameLoop {
 
 	private static Loader loader;
 	private static Shader shader;
 	private static Renderer renderer;
-	private static Random rand;
 
 	private static List<Entity> entities = new ArrayList<Entity>();
 
 	private static int escapeKey;
-	private static boolean debugMode;
-	private static short state;
 
+	/**
+	 * The entry point of execution
+	 * 
+	 * @param args
+	 *            Runtime arguments passed by the cmd
+	 */
 	public static void main(String[] args) {
 		init(); // Initialize everything that will be used in the game
 		while (!Display.isCloseRequested()) {
@@ -44,9 +50,10 @@ public class MainGameLoop {
 		stop(); // Clean up
 	}
 
+	/**
+	 * Initialize the game and load the resources
+	 */
 	private static void init() {
-		rand = new Random(); // Initialize the random for future use
-
 		/**
 		 * Read the properties file and create vars from it
 		 */
@@ -57,8 +64,6 @@ public class MainGameLoop {
 				.getProperty("display_height"));
 		String displayName = PropertiesFile.getProperty("display_name");
 		escapeKey = Integer.parseInt(PropertiesFile.getProperty("key_escape"));
-		debugMode = Boolean.parseBoolean(PropertiesFile
-				.getProperty("game_debug"));
 		String shaderVertexName = PropertiesFile.getProperty("game_normalVert");
 		String shaderFragmentName = PropertiesFile
 				.getProperty("game_normalFrag");
@@ -101,7 +106,7 @@ public class MainGameLoop {
 				new Vector2f(0f, 0f), 0f, new Vector2f(1f, 1f));
 		CameraComponent cameraComp = new CameraComponent(cameraTransform,
 				renderer); // Create camera component
-		cameraComp.tick(); // Ticking to prevent NPE at prepare method
+		cameraComp.tick(); // Ticking to prevent initial NPE at prepare method
 		camera.addComponent(cameraComp);
 		entities.add(camera);
 		PositionalAnchorComponent anchor = new PositionalAnchorComponent(
@@ -109,6 +114,10 @@ public class MainGameLoop {
 		camera.addComponent(anchor);
 	}
 
+	/**
+	 * Tick all components and render the screen. This method shouldn't need to
+	 * be changed
+	 */
 	private static void loop() {
 		renderer.prepare(); // Clear the screen
 		for (Entity e : entities) { // Loop through all entities
@@ -120,6 +129,9 @@ public class MainGameLoop {
 		DisplayManager.update(); // Update the screen
 	}
 
+	/**
+	 * Clean up graphics objects and formally stop the game
+	 */
 	public static void stop() {
 		loader.cleanUp(); // Delete VAOs, VBOs, textures
 		renderer.cleanUp(); // Delete shaders
