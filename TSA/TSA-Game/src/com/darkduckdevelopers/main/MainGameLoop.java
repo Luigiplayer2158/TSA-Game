@@ -44,10 +44,10 @@ public class MainGameLoop {
 	 */
 	public static void main(String[] args) {
 		init(); // Initialize everything that will be used in the game
-		while (!Display.isCloseRequested()) {
+		while (true) { // Note: Stop is called from within loop, so there is no
+						// need to stop it
 			loop(); // Move everything, process player input, etc
 		}
-		stop(); // Clean up
 	}
 
 	/**
