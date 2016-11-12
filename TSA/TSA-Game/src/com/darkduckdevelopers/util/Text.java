@@ -8,9 +8,8 @@ import org.lwjgl.util.vector.Vector2f;
 import com.darkduckdevelopers.components.RenderComponent;
 import com.darkduckdevelopers.components.TransformComponent;
 import com.darkduckdevelopers.objects.Entity;
-import com.darkduckdevelopers.render.Loader;
+import com.darkduckdevelopers.objects.ShapeTexture;
 import com.darkduckdevelopers.render.Renderer;
-import com.darkduckdevelopers.shapes.ShapeTexture;
 
 /**
  * A class that generates text to render

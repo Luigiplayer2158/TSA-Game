@@ -14,13 +14,13 @@ import com.darkduckdevelopers.components.PositionalAnchorComponent;
 import com.darkduckdevelopers.components.RenderComponent;
 import com.darkduckdevelopers.components.TransformComponent;
 import com.darkduckdevelopers.objects.Entity;
+import com.darkduckdevelopers.objects.ShapeTexture;
 import com.darkduckdevelopers.render.DisplayManager;
-import com.darkduckdevelopers.render.Loader;
 import com.darkduckdevelopers.render.Renderer;
 import com.darkduckdevelopers.shaders.Shader;
-import com.darkduckdevelopers.shapes.ShapeTexture;
 import com.darkduckdevelopers.util.AudioMaster;
 import com.darkduckdevelopers.util.ControllerMaster;
+import com.darkduckdevelopers.util.Loader;
 import com.darkduckdevelopers.util.PropertiesFile;
 import com.darkduckdevelopers.util.Text;
 

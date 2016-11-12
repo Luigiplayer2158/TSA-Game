@@ -1,7 +1,7 @@
 package com.darkduckdevelopers.main;
 
+import com.darkduckdevelopers.objects.Source;
 import com.darkduckdevelopers.util.AudioMaster;
-import com.darkduckdevelopers.util.Source;
 
 public class SoundTesting {
 

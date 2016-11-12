@@ -1,4 +1,4 @@
-package com.darkduckdevelopers.render;
+package com.darkduckdevelopers.util;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -13,6 +13,7 @@ import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
 import com.darkduckdevelopers.main.MainGameLoop;
+import com.darkduckdevelopers.render.Renderer;
 
 /**
  * A class for loading items into the GPU

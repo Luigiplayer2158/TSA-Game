@@ -1,4 +1,4 @@
-package com.darkduckdevelopers.util;
+package com.darkduckdevelopers.objects;
 
 import org.lwjgl.openal.AL10;
 

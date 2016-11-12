@@ -1,7 +1,7 @@
 package com.darkduckdevelopers.components;
 
+import com.darkduckdevelopers.objects.ShapeTexture;
 import com.darkduckdevelopers.render.Renderer;
-import com.darkduckdevelopers.shapes.ShapeTexture;
 
 /**
  * A component that adds an entity to the render queue

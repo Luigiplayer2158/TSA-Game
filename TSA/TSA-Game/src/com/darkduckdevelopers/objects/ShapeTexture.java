@@ -1,4 +1,4 @@
-package com.darkduckdevelopers.shapes;
+package com.darkduckdevelopers.objects;
 
 /**
  * A class representing a texture for an object. Functionality should probably
