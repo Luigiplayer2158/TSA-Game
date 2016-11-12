@@ -8,6 +8,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector2f;
 
 import com.darkduckdevelopers.components.CameraComponent;
+import com.darkduckdevelopers.components.PlayerComponent;
 import com.darkduckdevelopers.components.PositionalAnchorComponent;
 import com.darkduckdevelopers.components.RenderComponent;
 import com.darkduckdevelopers.components.TransformComponent;
@@ -18,6 +19,7 @@ import com.darkduckdevelopers.render.Renderer;
 import com.darkduckdevelopers.shaders.Shader;
 import com.darkduckdevelopers.shapes.ShapeTexture;
 import com.darkduckdevelopers.util.AudioMaster;
+import com.darkduckdevelopers.util.ControllerMaster;
 import com.darkduckdevelopers.util.PropertiesFile;
 import com.darkduckdevelopers.util.Text;
 
@@ -43,6 +45,12 @@ public class MainGameLoop {
 	 *            Runtime arguments passed by the cmd
 	 */
 	public static void main(String[] args) {
+		/* TESTING THINGS */
+		ControllerMaster.getControllers();
+		ControllerMaster.tick(); // Controllers will spike
+		ControllerMaster.tick();
+		
+		/* REAL GAME */
 		init(); // Initialize everything that will be used in the game
 		while (true) { // Note: Stop is called from within loop, so there is no
 						// need to stop it
@@ -87,7 +95,7 @@ public class MainGameLoop {
 		 */
 		Entity player = new Entity(); // Create a new player entity
 		TransformComponent playerTransform = new TransformComponent(
-				new Vector2f(0f, 0f), 0f, new Vector2f(1f, 1f)); // Info on
+				new Vector2f(0f, 0f), 0f, new Vector2f(0.1f, 0.1f)); // Info on
 																	// transformation
 		RenderComponent playerRender = new RenderComponent(renderer,
 				playerTransform, new ShapeTexture(
@@ -96,8 +104,10 @@ public class MainGameLoop {
 																		// render
 																		// the
 																		// player
+		PlayerComponent playerControl = new PlayerComponent(playerTransform, ControllerMaster.gamepads[0], 1f, 270f, 0.1f);
 		player.addComponent(playerRender); // Add component. Not adding
 											// transform because it's just data
+		player.addComponent(playerControl);
 		entities.add(player); // Add player to the entity list so its components
 								// are ticked
 
@@ -111,7 +121,7 @@ public class MainGameLoop {
 		entities.add(camera);
 		PositionalAnchorComponent anchor = new PositionalAnchorComponent(
 				playerTransform, cameraTransform); // Anchor camera to player
-		camera.addComponent(anchor);
+		//camera.addComponent(anchor);
 	}
 
 	/**
@@ -119,11 +129,12 @@ public class MainGameLoop {
 	 * be changed
 	 */
 	private static void loop() {
+		ControllerMaster.tick();
 		renderer.prepare(); // Clear the screen
 		for (Entity e : entities) { // Loop through all entities
 			e.update(); // Update entity's components
 		}
-		if (Keyboard.isKeyDown(escapeKey)) { // Check if ESC is down
+		if (Keyboard.isKeyDown(escapeKey) || Display.isCloseRequested()) { // Check if ESC is down
 			stop(); // Stop the game
 		}
 		DisplayManager.update(); // Update the screen
