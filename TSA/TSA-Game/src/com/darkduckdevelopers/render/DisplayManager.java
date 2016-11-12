@@ -42,7 +42,7 @@ public class DisplayManager {
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 		}
-
+		previousTime = Sys.getTime() * 1000 / Sys.getTimerResolution();
 	}
 
 	/**

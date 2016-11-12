@@ -19,14 +19,16 @@ import net.java.games.input.Component.Identifier;
 public class PlayerComponent extends BaseComponent {
 
 	public TransformComponent transform;
+	public CollideComponent collider;
 	public Controller controller;
-	HashMap<String, Identifier> components;
+	public HashMap<String, Identifier> components;
 	public float speed;
-	public float turnSpeed;
+	public float jumpSpeed;
 	public float deadzone;
-
-	public PlayerComponent(TransformComponent transform, Controller controller, float speed, float turnSpeed, float deadzone) {
-		this.transform = transform;
+	
+	public PlayerComponent(CollideComponent collider, Controller controller, float speed, float jumpSpeed, float deadzone) {
+		this.transform = collider.transform;
+		this.collider = collider;
 		this.controller = controller;
 		components = new HashMap<String, Identifier>();
 		if (controller != null) { // A null controller is considered Keyboard + Mouse
@@ -35,7 +37,7 @@ public class PlayerComponent extends BaseComponent {
 			}
 		}
 		this.speed = speed;
-		this.turnSpeed = turnSpeed;
+		this.jumpSpeed = jumpSpeed;
 		this.deadzone = deadzone;
 	}
 
@@ -44,21 +46,16 @@ public class PlayerComponent extends BaseComponent {
 	// TODO Configurable inputs
 	public void tick() {
 		float dx = 0f;
-		float dy = 0f;
-		float dr = 0f;
 		if (controller == null) {
 			// If there is no controller, use keyboard input
-			if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-				dy += speed * DisplayManager.getFrameTimeSeconds();
-			}
-			if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-				dy -= speed * DisplayManager.getFrameTimeSeconds();
-			}
 			if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
 				dx -= speed * DisplayManager.getFrameTimeSeconds();
 			}
 			if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
 				dx += speed * DisplayManager.getFrameTimeSeconds();
+			}
+			if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && collider.isGrounded) {
+				collider.verticalSpeed = jumpSpeed;
 			}
 		} else {
 			// Use controller LStick to move
@@ -66,18 +63,11 @@ public class PlayerComponent extends BaseComponent {
 				dx += controller.getComponent(components.get("X Axis")).getPollData() * speed
 						* DisplayManager.getFrameTimeSeconds();
 			}
-			if (Math.abs(controller.getComponent(components.get("Y Axis")).getPollData()) > deadzone) {
-			dy -= controller.getComponent(components.get("Y Axis")).getPollData() * speed
-					* DisplayManager.getFrameTimeSeconds();
-			}
-			// RStick to turn
-			if (Math.abs(controller.getComponent(components.get("Z Axis")).getPollData()) > deadzone) {
-				dr -= controller.getComponent(components.get("Z Axis")).getPollData() * turnSpeed
-						* DisplayManager.getFrameTimeSeconds();
+			if (controller.getComponent(components.get("Button 1")).getPollData() > 0.5f && collider.isGrounded) {
+				collider.verticalSpeed = jumpSpeed;
 			}
 		}
-		transform.rotation += dr;
-		transform.position = new Vector2f(transform.position.x + dx, transform.position.y + dy);
+		transform.position.x += dx;
 	}
 
 }

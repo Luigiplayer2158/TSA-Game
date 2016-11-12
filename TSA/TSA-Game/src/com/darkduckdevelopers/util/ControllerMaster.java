@@ -7,10 +7,18 @@ import net.java.games.input.Controller;
 import net.java.games.input.Controller.Type;
 import net.java.games.input.ControllerEnvironment;
 
+/**
+ * A class to manage gamepads
+ * 
+ * @author Zachary
+ */
 public class ControllerMaster {
-	
+
 	public static Controller[] gamepads;
 
+	/**
+	 * Get all connected gamepads and put them in the gamepad array
+	 */
 	public static void getControllers() {
 		Controller[] controllers = ControllerEnvironment.getDefaultEnvironment().getControllers();
 		List<Controller> identifiedControllers = new ArrayList<Controller>();
@@ -28,7 +36,10 @@ public class ControllerMaster {
 			gamepads[i] = identifiedControllers.get(i);
 		}
 	}
-	
+
+	/**
+	 * Poll all gamepads for input
+	 */
 	public static void tick() {
 		for (Controller c : gamepads) {
 			c.poll();
