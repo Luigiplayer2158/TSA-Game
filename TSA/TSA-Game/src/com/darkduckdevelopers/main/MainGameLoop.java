@@ -8,6 +8,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector2f;
 
 import com.darkduckdevelopers.components.CameraComponent;
+import com.darkduckdevelopers.components.CollideComponent;
 import com.darkduckdevelopers.components.PlayerComponent;
 import com.darkduckdevelopers.components.PositionalAnchorComponent;
 import com.darkduckdevelopers.components.RenderComponent;
@@ -49,7 +50,7 @@ public class MainGameLoop {
 		ControllerMaster.getControllers();
 		ControllerMaster.tick(); // Controllers will spike
 		ControllerMaster.tick();
-		
+
 		/* REAL GAME */
 		init(); // Initialize everything that will be used in the game
 		while (true) { // Note: Stop is called from within loop, so there is no
@@ -66,15 +67,12 @@ public class MainGameLoop {
 		 * Read the properties file and create vars from it
 		 */
 		PropertiesFile.readFile("properties");
-		int displayWidth = Integer.parseInt(PropertiesFile
-				.getProperty("display_width"));
-		int displayHeight = Integer.parseInt(PropertiesFile
-				.getProperty("display_height"));
+		int displayWidth = Integer.parseInt(PropertiesFile.getProperty("display_width"));
+		int displayHeight = Integer.parseInt(PropertiesFile.getProperty("display_height"));
 		String displayName = PropertiesFile.getProperty("display_name");
 		escapeKey = Integer.parseInt(PropertiesFile.getProperty("key_escape"));
 		String shaderVertexName = PropertiesFile.getProperty("game_normalVert");
-		String shaderFragmentName = PropertiesFile
-				.getProperty("game_normalFrag");
+		String shaderFragmentName = PropertiesFile.getProperty("game_normalFrag");
 
 		DisplayManager.createDisplay(displayWidth, displayHeight, displayName); // Create
 																				// the
@@ -94,34 +92,60 @@ public class MainGameLoop {
 		 * commented on their first appearance.
 		 */
 		Entity player = new Entity(); // Create a new player entity
-		TransformComponent playerTransform = new TransformComponent(
-				new Vector2f(0f, 0f), 0f, new Vector2f(0.1f, 0.1f)); // Info on
-																	// transformation
-		RenderComponent playerRender = new RenderComponent(renderer,
-				playerTransform, new ShapeTexture(
-						loader.loadTexture("player.png")), 0, true); // Component
-																		// to
-																		// render
-																		// the
-																		// player
-		PlayerComponent playerControl = new PlayerComponent(playerTransform, ControllerMaster.gamepads[0], 1f, 270f, 0.1f);
+		TransformComponent playerTransform = new TransformComponent(new Vector2f(0f, 0f), 0f, new Vector2f(0.1f, 0.1f)); // Info
+																															// on
+																															// transformation
+		RenderComponent playerRender = new RenderComponent(renderer, playerTransform,
+				new ShapeTexture(loader.loadTexture("player.png")), 0, true); // Component
+																				// to
+																				// render
+																				// the
+																				// player
+		PlayerComponent playerControl = new PlayerComponent(playerTransform, ControllerMaster.gamepads[0], 1f, 270f,
+				0.1f);
+		CollideComponent playerCollider = new CollideComponent(playerTransform, 1);
 		player.addComponent(playerRender); // Add component. Not adding
 											// transform because it's just data
 		player.addComponent(playerControl);
+		player.addComponent(playerCollider);
 		entities.add(player); // Add player to the entity list so its components
 								// are ticked
 
+		for (int i = 0; i < 10; i++) {
+			if (i == 7) {
+				Entity ground = new Entity();
+				TransformComponent transform = new TransformComponent(new Vector2f(-0.9f + (i * 0.2f), 0.5f), 0f,
+						new Vector2f(0.1f, 0.1f));
+				RenderComponent render = new RenderComponent(renderer, transform, new ShapeTexture(loader.loadTexture("player.png")), 0, true);
+				CollideComponent collider = new CollideComponent(transform, 0);
+				ground.addComponent(render);
+				ground.addComponent(collider);
+				entities.add(ground);
+			} else {
+				Entity ground = new Entity();
+				TransformComponent transform = new TransformComponent(new Vector2f(-0.9f + (i * 0.2f), -0.5f), 0f,
+						new Vector2f(0.1f, 0.1f));
+				RenderComponent render = new RenderComponent(renderer, transform, new ShapeTexture(loader.loadTexture("player.png")), 0, true);
+				CollideComponent collider = new CollideComponent(transform, 0);
+				ground.addComponent(render);
+				ground.addComponent(collider);
+				entities.add(ground);
+			}
+		}
+
 		Entity camera = new Entity();
-		TransformComponent cameraTransform = new TransformComponent(
-				new Vector2f(0f, 0f), 0f, new Vector2f(1f, 1f));
-		CameraComponent cameraComp = new CameraComponent(cameraTransform,
-				renderer); // Create camera component
+		TransformComponent cameraTransform = new TransformComponent(new Vector2f(0f, 0f), 0f, new Vector2f(1f, 1f));
+		CameraComponent cameraComp = new CameraComponent(cameraTransform, renderer); // Create
+																						// camera
+																						// component
 		cameraComp.tick(); // Ticking to prevent initial NPE at prepare method
 		camera.addComponent(cameraComp);
 		entities.add(camera);
-		PositionalAnchorComponent anchor = new PositionalAnchorComponent(
-				playerTransform, cameraTransform); // Anchor camera to player
-		//camera.addComponent(anchor);
+		PositionalAnchorComponent anchor = new PositionalAnchorComponent(playerTransform, cameraTransform); // Anchor
+																											// camera
+																											// to
+																											// player
+		// camera.addComponent(anchor);
 	}
 
 	/**
@@ -134,7 +158,11 @@ public class MainGameLoop {
 		for (Entity e : entities) { // Loop through all entities
 			e.update(); // Update entity's components
 		}
-		if (Keyboard.isKeyDown(escapeKey) || Display.isCloseRequested()) { // Check if ESC is down
+		if (Keyboard.isKeyDown(escapeKey) || Display.isCloseRequested()) { // Check
+																			// if
+																			// ESC
+																			// is
+																			// down
 			stop(); // Stop the game
 		}
 		DisplayManager.update(); // Update the screen
