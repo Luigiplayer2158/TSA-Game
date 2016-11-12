@@ -1,0 +1,43 @@
+After much messing around, I have discovered the gamepads' various buttons.
+If you have a controller that isn't listed here, please test all of the inputs and write them here.
+
+PS4 (Wireless Controller)
+Button 0: Square
+Button 1: X
+Button 2: O
+Button 3: Triangle
+Button 4: L1
+Button 5: R1
+Button 6: L2
+Button 7: R2
+Button 8: Share
+Button 9: Options
+Button 10: LStick Press
+Button 11: RStick Press
+Button 12: PS Button
+Button 13: Trackpad Press
+Hat Switch: Dpad (.25 up, .5 right, .75 down, 1 left)
+X Axis: LStick L/R
+X Rotation: L2 Intensity
+Y Axis: LStick U/D
+Y Rotation: R2 Intensity
+Z Axis: RStick L/R
+Z Rotation: RStick U/D
+
+Xbox (Controller (XBOX 360 For Windows))
+Button 0: A
+Button 1: B
+Button 2: X
+Button 3: Y
+Button 4: LB
+Button 5: RB
+Button 6: Back
+Button 7: Start
+Button 8: LStick Press
+Button 9: RStick Press
+Hat Switch: Dpad (.25 up, .5 right, .75 down, 1 left)
+X Axis: LStick L/R
+X Rotation: RStick L/R
+Y Axis: LStick U/D
+Y Rotation: RStick U/D
+Z Axis: LT Intensity - RT Intensity
