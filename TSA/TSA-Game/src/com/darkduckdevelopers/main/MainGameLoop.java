@@ -109,7 +109,7 @@ public class MainGameLoop {
 		RenderComponent playerRender = new RenderComponent(renderer, playerTransform,
 				new ShapeTexture(loader.loadTexture("player.png")), 0, true);
 		CollideComponent playerCollider = new CollideComponent(playerTransform, 1, -2f);
-		PlayerComponent playerControl = new PlayerComponent(playerCollider, ControllerMaster.gamepads[0], 0.7f, 1f,
+		PlayerComponent playerControl = new PlayerComponent(playerCollider, null, 0.7f, 1f,
 				0.1f);
 		player.addComponent(playerRender);
 		player.addComponent(playerControl);

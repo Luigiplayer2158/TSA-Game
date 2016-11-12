@@ -2,14 +2,13 @@ package com.darkduckdevelopers.components;
 
 import java.util.HashMap;
 
+import net.java.games.input.Component;
+import net.java.games.input.Component.Identifier;
+import net.java.games.input.Controller;
+
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.util.vector.Vector2f;
 
 import com.darkduckdevelopers.render.DisplayManager;
-
-import net.java.games.input.Component;
-import net.java.games.input.Controller;
-import net.java.games.input.Component.Identifier;
 
 /**
  * A component adding player controls
