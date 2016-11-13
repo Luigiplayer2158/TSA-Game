@@ -92,6 +92,7 @@ public class MainGameLoop {
 		 * The following code is all just entity creation. Unique components are
 		 * commented on their first appearance.
 		 */
+		/* Background entity */
 		Entity background = new Entity(); // Create a new background entity to
 											// hold components
 		TransformComponent backgroundTransform = new TransformComponent(new Vector2f(0f, 0f), 0f, new Vector2f(1f, 1f)); // Transformation
@@ -104,18 +105,28 @@ public class MainGameLoop {
 													// ticking queue
 		entities.add(background); // Add the entity to update queue
 
-		Entity player = new Entity();
-		TransformComponent playerTransform = new TransformComponent(new Vector2f(0f, 0f), 0f, new Vector2f(0.1f, 0.1f));
-		RenderComponent playerRender = new RenderComponent(renderer, playerTransform,
-				new ShapeTexture(loader.loadTexture("player.png")), 0, true);
-		CollideComponent playerCollider = new CollideComponent(playerTransform, 1, -2f);
-		PlayerComponent playerControl = new PlayerComponent(playerCollider, null, 0.7f, 1f,
-				0.1f);
-		player.addComponent(playerRender);
-		player.addComponent(playerControl);
-		player.addComponent(playerCollider);
-		entities.add(player);
+		/* Player entity */
+		TransformComponent playerTransform = null;
+		for (int i = 0; i < ControllerMaster.gamepads.length + 1; i++) {
+			Entity player = new Entity();
+			playerTransform = new TransformComponent(new Vector2f(0f, 0f), 0f,
+					new Vector2f(0.1f, 0.1f));
+			RenderComponent playerRender = new RenderComponent(renderer, playerTransform,
+					new ShapeTexture(loader.loadTexture("player.png")), 0, true);
+			CollideComponent playerCollider = new CollideComponent(playerTransform, 1, -2f);
+			PlayerComponent playerControl;
+			if (i > 0) {
+				playerControl = new PlayerComponent(playerCollider, ControllerMaster.gamepads[i-1], 0.7f, 1f, 0.1f);
+			} else {
+				playerControl = new PlayerComponent(playerCollider, null, 0.7f, 1f, 0.1f);
+			}
+			player.addComponent(playerRender);
+			player.addComponent(playerControl);
+			player.addComponent(playerCollider);
+			entities.add(player);
+		}
 
+		/* Camera entity */
 		Entity camera = new Entity();
 		TransformComponent cameraTransform = new TransformComponent(new Vector2f(0f, 0f), 0f, new Vector2f(1f, 1f));
 		CameraComponent cameraComp = new CameraComponent(cameraTransform, renderer); // Create
@@ -130,6 +141,7 @@ public class MainGameLoop {
 																											// player
 		camera.addComponent(anchor);
 
+		/* Terrain entities */
 		ShapeTexture groundTexture = new ShapeTexture(loader.loadTexture("ground.png"));
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 5; j++) {
@@ -145,7 +157,7 @@ public class MainGameLoop {
 				entities.add(ground);
 			}
 		}
-		
+
 		DisplayManager.update(); // Prevent time blinks
 	}
 

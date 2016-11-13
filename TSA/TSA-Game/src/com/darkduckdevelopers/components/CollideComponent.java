@@ -14,15 +14,34 @@ public class CollideComponent extends BaseComponent {
 
 	public static List<CollideComponent> entities;
 	public TransformComponent transform;
+	public PlayerComponent player;
 	public float size;
 	public float gravity;
 	public float verticalSpeed;
-	public int colliderType;
 	public boolean isGrounded;
+	public int colliderType;
+	// 0 - ground
+	// 1 - player
+	// 2 - other
 
 	public CollideComponent(TransformComponent transform, int colliderType, float gravity) {
 		this.transform = transform;
 		this.colliderType = colliderType;
+		if (entities == null) {
+			entities = new ArrayList<CollideComponent>();
+		}
+		entities.add(this);
+		if (transform.size.x > transform.size.y) {
+			size = transform.size.x;
+		} else {
+			size = transform.size.y;
+		}
+		this.gravity = gravity;
+	}
+	
+	public CollideComponent(PlayerComponent player, float gravity) {
+		this.transform = player.transform;
+		this.colliderType = 1;
 		if (entities == null) {
 			entities = new ArrayList<CollideComponent>();
 		}
@@ -41,7 +60,7 @@ public class CollideComponent extends BaseComponent {
 		verticalSpeed += gravity * DisplayManager.getFrameTimeSeconds();
 		transform.position.y += verticalSpeed * DisplayManager.getFrameTimeSeconds();
 		for (CollideComponent collider : entities) {
-			if (collider != this && collider.colliderType != 0) { // Don't
+			if (colliderType != collider.colliderType && collider.colliderType != 0) { // Don't
 																	// collide
 																	// with
 																	// self,
