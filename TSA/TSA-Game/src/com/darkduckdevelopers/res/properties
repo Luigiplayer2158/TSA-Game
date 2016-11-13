@@ -1,8 +1,0 @@
-display_width=987
-display_height=666
-display_name=high noon somewhere
-file_font=glyphs
-game_debug=true
-game_normalVert=/com/darkduckdevelopers/shaders/vertexShader
-game_normalFrag=/com/darkduckdevelopers/shaders/fragmentShader
-key_escape=1
