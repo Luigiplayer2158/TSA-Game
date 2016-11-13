@@ -60,12 +60,7 @@ public class CollideComponent extends BaseComponent {
 		verticalSpeed += gravity * DisplayManager.getFrameTimeSeconds();
 		transform.position.y += verticalSpeed * DisplayManager.getFrameTimeSeconds();
 		for (CollideComponent collider : entities) {
-			if (colliderType != collider.colliderType && collider.colliderType != 0) { // Don't
-																	// collide
-																	// with
-																	// self,
-																	// thats
-																	// stupid
+			if (colliderType != collider.colliderType && collider.colliderType != 0) {
 				float xOff = collider.transform.position.x - transform.position.x;
 				float combinedSize = collider.size + size;
 				if (Math.abs(xOff) <= combinedSize) {

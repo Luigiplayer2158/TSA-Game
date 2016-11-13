@@ -1,4 +1,4 @@
-display_width=987
+display_width=888
 display_height=666
 display_name=high noon somewhere
 file_font=glyphs.png

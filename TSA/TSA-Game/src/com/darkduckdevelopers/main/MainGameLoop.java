@@ -35,8 +35,11 @@ public class MainGameLoop {
 	private static Shader shader;
 	private static Renderer renderer;
 
-	private static List<Entity> entities = new ArrayList<Entity>();
+	private static List<Entity> temporaryGameEntities = new ArrayList<Entity>();
+	private static List<Entity> permanantGameEntities = new ArrayList<Entity>();
+	private static List<Entity> menuEntities = new ArrayList<Entity>();
 
+	private static int gameState;
 	private static int escapeKey;
 
 	/**
@@ -57,6 +60,7 @@ public class MainGameLoop {
 	 * Initialize the game and load the resources
 	 */
 	private static void init() {
+		gameState = 0;
 		/**
 		 * Create the gamepads and clear out values because they like to spike
 		 */
@@ -82,83 +86,14 @@ public class MainGameLoop {
 																	// shader
 		loader = new Loader(); // Initialize loader
 		renderer = new Renderer(shader); // Initialize renderer
-		System.out.print("[INFO] "); // Console formatting stuff
 		Text.initShape(loader, renderer); // Initialize the data in the text
 											// renderer
 		loader.loadToVAO(Renderer.positions); // Load the quad VAO that will be
 												// used for everything
-
-		/**
-		 * The following code is all just entity creation. Unique components are
-		 * commented on their first appearance.
-		 */
-		/* Background entity */
-		Entity background = new Entity(); // Create a new background entity to
-											// hold components
-		TransformComponent backgroundTransform = new TransformComponent(new Vector2f(0f, 0f), 0f, new Vector2f(1f, 1f)); // Transformation
-																															// info
-		RenderComponent backgroundRender = new RenderComponent(renderer, backgroundTransform,
-				new ShapeTexture(loader.loadTexture("background.png")), 0, false); // Render
-																					// the
-																					// entity
-		background.addComponent(backgroundRender); // Add the component to the
-													// ticking queue
-		entities.add(background); // Add the entity to update queue
-
-		/* Player entity */
-		TransformComponent playerTransform = null;
-		for (int i = 0; i < ControllerMaster.gamepads.length + 1; i++) {
-			Entity player = new Entity();
-			playerTransform = new TransformComponent(new Vector2f(0f, 0f), 0f,
-					new Vector2f(0.1f, 0.1f));
-			RenderComponent playerRender = new RenderComponent(renderer, playerTransform,
-					new ShapeTexture(loader.loadTexture("player.png")), 0, true);
-			CollideComponent playerCollider = new CollideComponent(playerTransform, 1, -2f);
-			PlayerComponent playerControl;
-			if (i > 0) {
-				playerControl = new PlayerComponent(playerCollider, ControllerMaster.gamepads[i-1], 0.7f, 1f, 0.1f);
-			} else {
-				playerControl = new PlayerComponent(playerCollider, null, 0.7f, 1f, 0.1f);
-			}
-			player.addComponent(playerRender);
-			player.addComponent(playerControl);
-			player.addComponent(playerCollider);
-			entities.add(player);
-		}
-
-		/* Camera entity */
-		Entity camera = new Entity();
-		TransformComponent cameraTransform = new TransformComponent(new Vector2f(0f, 0f), 0f, new Vector2f(1f, 1f));
-		CameraComponent cameraComp = new CameraComponent(cameraTransform, renderer); // Create
-																						// camera
-																						// component
-		cameraComp.tick(); // Ticking to prevent initial NPE at prepare method
-		camera.addComponent(cameraComp);
-		entities.add(camera);
-		PositionalAnchorComponent anchor = new PositionalAnchorComponent(playerTransform, cameraTransform); // Anchor
-																											// camera
-																											// to
-																											// player
-		camera.addComponent(anchor);
-
-		/* Terrain entities */
-		ShapeTexture groundTexture = new ShapeTexture(loader.loadTexture("ground.png"));
-		for (int i = 0; i < 10; i++) {
-			for (int j = 0; j < 5; j++) {
-				Entity ground = new Entity();
-				TransformComponent transform = new TransformComponent(
-						new Vector2f(-0.9f + (i * 0.2f), -0.5f - j * 0.2f), 0f, new Vector2f(0.1f, 0.1f));
-				RenderComponent render = new RenderComponent(renderer, transform, groundTexture, 0, true);
-				ground.addComponent(render);
-				if (j == 0) {
-					CollideComponent collider = new CollideComponent(transform, 0, 0f);
-					ground.addComponent(collider);
-				}
-				entities.add(ground);
-			}
-		}
-
-		DisplayManager.update(); // Prevent time blinks
+		initMenuEntities(menuEntities);
+		initPermanantEntities(permanantGameEntities);
+		initTemporaryEntities(temporaryGameEntities);
+		DisplayManager.update();
 	}
 
 	/**
@@ -168,15 +103,27 @@ public class MainGameLoop {
 	private static void loop() {
 		ControllerMaster.tick();
 		renderer.prepare(); // Clear the screen
-		for (Entity e : entities) { // Loop through all entities
-			e.update(); // Update entity's components
+		if (gameState == 1) {
+			for (Entity e : temporaryGameEntities) { // Loop through all
+														// entities
+				e.update(); // Update entity's components
+			}
+			for (Entity e : permanantGameEntities) {
+				e.update();
+			}
 		}
-		if (Keyboard.isKeyDown(escapeKey) || Display.isCloseRequested()) { // Check
-																			// if
-																			// ESC
-																			// is
-																			// down
+		if (gameState == 0) {
+			for (Entity e : menuEntities) {
+				e.update();
+			}
+		}
+		if (Keyboard.isKeyDown(escapeKey) || Display.isCloseRequested()) {
 			stop(); // Stop the game
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_0)) {
+			gameState = 0;
+		} else if (Keyboard.isKeyDown(Keyboard.KEY_1)) {
+			gameState = 1;
 		}
 		DisplayManager.update(); // Update the screen
 	}
@@ -190,6 +137,72 @@ public class MainGameLoop {
 		DisplayManager.cleanUp(); // Destroy the screen
 		AudioMaster.cleanUp(); // Clean up audio
 		System.exit(0); // Exit because it's technically still looping
+	}
+
+	////////////////////////////////////////////
+	// WARNING: IMMENSE ENTITY CREATION BELOW //
+	////////////////////////////////////////////
+	
+	private static void initPermanantEntities(List<Entity> entities) {
+		/* Player entity */
+		TransformComponent playerTransform = null;
+		for (int i = 0; i < ControllerMaster.gamepads.length + 1; i++) {
+			Entity player = new Entity();
+			playerTransform = new TransformComponent(new Vector2f(0f, 0f), 0f, new Vector2f(0.1f, 0.1f));
+			RenderComponent playerRender = new RenderComponent(renderer, playerTransform,
+					new ShapeTexture(loader.loadTexture("player.png")), 0, true);
+			CollideComponent playerCollider = new CollideComponent(playerTransform, 1, -2f);
+			PlayerComponent playerControl;
+			if (i > 0) {
+				playerControl = new PlayerComponent(playerCollider, ControllerMaster.gamepads[i - 1], 0.7f, 1f, 0.1f);
+			} else {
+				playerControl = new PlayerComponent(playerCollider, null, 0.7f, 1f, 0.1f);
+			}
+			player.addComponent(playerRender);
+			player.addComponent(playerControl);
+			player.addComponent(playerCollider);
+			permanantGameEntities.add(player);
+		}
+
+		/* Camera entity */
+		Entity camera = new Entity();
+		TransformComponent cameraTransform = new TransformComponent(new Vector2f(0f, 0f), 0f, new Vector2f(1f, 1f));
+		CameraComponent cameraComp = new CameraComponent(cameraTransform, renderer);
+		cameraComp.tick();
+		camera.addComponent(cameraComp);
+		permanantGameEntities.add(camera);
+		PositionalAnchorComponent anchor = new PositionalAnchorComponent(playerTransform, cameraTransform);
+		camera.addComponent(anchor);
+	}
+	
+	private static void initTemporaryEntities(List<Entity> entities) {
+		/* Background entity */
+		Entity background = new Entity();
+		TransformComponent backgroundTransform = new TransformComponent(new Vector2f(0f, 0f), 0f, new Vector2f(1f, 1f));
+		RenderComponent backgroundRender = new RenderComponent(renderer, backgroundTransform,
+				new ShapeTexture(loader.loadTexture("background.png")), 0, false);
+		background.addComponent(backgroundRender);
+		temporaryGameEntities.add(background);
+		/* Terrain entities */
+		ShapeTexture groundTexture = new ShapeTexture(loader.loadTexture("ground.png"));
+		for (int i = 0; i < 10; i++) {
+			for (int j = 0; j < 5; j++) {
+				Entity ground = new Entity();
+				TransformComponent transform = new TransformComponent(
+						new Vector2f(-0.9f + (i * 0.2f), -0.9f - j * 0.2f), 0f, new Vector2f(0.1f, 0.1f));
+				RenderComponent render = new RenderComponent(renderer, transform, groundTexture, 0, true);
+				ground.addComponent(render);
+				if (j == 0) {
+					CollideComponent collider = new CollideComponent(transform, 0, 0f);
+					ground.addComponent(collider);
+				}
+				temporaryGameEntities.add(ground);
+			}
+		}
+	}
+	
+	private static void initMenuEntities(List<Entity> entities) {
+		
 	}
 
 }
