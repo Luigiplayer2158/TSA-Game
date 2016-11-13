@@ -9,6 +9,7 @@ import org.lwjgl.util.vector.Vector2f;
 
 import com.darkduckdevelopers.components.CameraComponent;
 import com.darkduckdevelopers.components.CollideComponent;
+import com.darkduckdevelopers.components.DebugComponent;
 import com.darkduckdevelopers.components.PlayerComponent;
 import com.darkduckdevelopers.components.PositionalAnchorComponent;
 import com.darkduckdevelopers.components.RenderComponent;
@@ -90,9 +91,9 @@ public class MainGameLoop {
 											// renderer
 		loader.loadToVAO(Renderer.positions); // Load the quad VAO that will be
 												// used for everything
-		initMenuEntities(menuEntities);
 		initPermanantEntities(permanantGameEntities);
 		initTemporaryEntities(temporaryGameEntities);
+		initMenuEntities(menuEntities);
 		DisplayManager.update();
 	}
 
@@ -183,6 +184,7 @@ public class MainGameLoop {
 				new ShapeTexture(loader.loadTexture("background.png")), 0, false);
 		background.addComponent(backgroundRender);
 		temporaryGameEntities.add(background);
+		menuEntities.add(background);
 		/* Terrain entities */
 		ShapeTexture groundTexture = new ShapeTexture(loader.loadTexture("ground.png"));
 		for (int i = 0; i < 10; i++) {
@@ -202,7 +204,12 @@ public class MainGameLoop {
 	}
 	
 	private static void initMenuEntities(List<Entity> entities) {
-		
+		/* Title entity */
+		Entity title = new Entity();
+		TransformComponent titleTransform = new TransformComponent(new Vector2f(0f, 0.5f), 0f, new Vector2f(0.8f, 0.8f));
+		RenderComponent titleRender = new RenderComponent(renderer, titleTransform, new ShapeTexture(loader.loadTexture("title.png")), 0, false);
+		title.addComponent(titleRender);
+		menuEntities.add(title);
 	}
 
 }
