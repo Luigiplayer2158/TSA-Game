@@ -48,21 +48,22 @@ public class CollideComponent extends BaseComponent {
 																	// thats
 																	// stupid
 				float xOff = collider.transform.position.x - transform.position.x;
-				if (Math.abs(xOff) <= collider.size + size) {
+				float combinedSize = collider.size + size;
+				if (Math.abs(xOff) <= combinedSize) {
 					float yOff = collider.transform.position.y - transform.position.y;
-					if (Math.abs(yOff) <= (collider.size + size)) {
-						if (Math.abs(yOff) > Math.abs(xOff) - 0.05f) {
+					if (Math.abs(yOff) <= combinedSize) {
+						if (Math.abs(yOff) > Math.abs(xOff) - 0.01f) {
 							if (yOff > 0) {
-								collider.transform.position.y = transform.position.y + (collider.size + size);
+								collider.transform.position.y = transform.position.y + combinedSize;
 								collider.stopGravity();
 							} else {
-								collider.transform.position.y = transform.position.y - (collider.size + size);
+								collider.transform.position.y = transform.position.y - combinedSize;
 							}
 						} else {
 							if (xOff > 0) {
-								collider.transform.position.x = transform.position.x + (collider.size + size);
+								collider.transform.position.x = transform.position.x + combinedSize;
 							} else {
-								collider.transform.position.x = transform.position.x - (collider.size + size);
+								collider.transform.position.x = transform.position.x - combinedSize;
 							}
 						}
 					}
