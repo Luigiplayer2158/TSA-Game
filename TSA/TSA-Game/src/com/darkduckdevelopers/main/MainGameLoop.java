@@ -11,6 +11,7 @@ import com.darkduckdevelopers.components.CameraComponent;
 import com.darkduckdevelopers.components.CollideComponent;
 import com.darkduckdevelopers.components.PlayerComponent;
 import com.darkduckdevelopers.components.PositionalAnchorComponent;
+import com.darkduckdevelopers.components.ProjectileComponent;
 import com.darkduckdevelopers.components.RenderComponent;
 import com.darkduckdevelopers.components.TransformComponent;
 import com.darkduckdevelopers.objects.Entity;
@@ -200,6 +201,15 @@ public class MainGameLoop {
 				temporaryGameEntities.add(ground);
 			}
 		}
+		Entity testProjectile = new Entity();
+		TransformComponent projectileTransform = new TransformComponent(new Vector2f(0f, 0f), 0f, new Vector2f(0.05f, 0.05f));
+		RenderComponent projectileRender = new RenderComponent(renderer, projectileTransform, new ShapeTexture(loader.loadTexture("sprites.png")), 0, true);
+		CollideComponent projectileCollide = new CollideComponent(projectileTransform, 2, -2f);
+		ProjectileComponent projectile = new ProjectileComponent(projectileTransform, projectileCollide);
+		testProjectile.addComponent(projectileRender);
+		testProjectile.addComponent(projectileCollide);
+		testProjectile.addComponent(projectile);
+		temporaryGameEntities.add(testProjectile);
 	}
 	
 	private static void initMenuEntities(List<Entity> entities) {

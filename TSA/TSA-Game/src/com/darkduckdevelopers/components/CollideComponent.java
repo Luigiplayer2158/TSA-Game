@@ -22,29 +22,15 @@ public class CollideComponent extends BaseComponent {
 	public int colliderType;
 	public int hitBy = -1;
 
-	// 0 - ground
+	// 0 - static
 	// 1 - player
-	// 2 - other
+	// 2 - moves player
+	// 3 - player moves
 
 	public CollideComponent(TransformComponent transform, int colliderType,
 			float gravity) {
 		this.transform = transform;
 		this.colliderType = colliderType;
-		if (entities == null) {
-			entities = new ArrayList<CollideComponent>();
-		}
-		entities.add(this);
-		if (transform.size.x > transform.size.y) {
-			size = transform.size.x;
-		} else {
-			size = transform.size.y;
-		}
-		this.gravity = gravity;
-	}
-
-	public CollideComponent(PlayerComponent player, float gravity) {
-		this.transform = player.transform;
-		this.colliderType = 1;
 		if (entities == null) {
 			entities = new ArrayList<CollideComponent>();
 		}
@@ -74,22 +60,26 @@ public class CollideComponent extends BaseComponent {
 							- transform.position.y;
 					if (Math.abs(yOff) <= combinedSize) {
 						collider.hit(colliderType);
-						if (Math.abs(yOff) > Math.abs(xOff) - 0.01f) {
-							if (yOff > 0) {
-								collider.transform.position.y = transform.position.y
-										+ combinedSize;
-								collider.stopGravity();
+						if (colliderType != 1 || collider.colliderType == 3) {
+							if (Math.abs(yOff) > Math.abs(xOff) - 0.01f) {
+								if (yOff > 0) {
+									collider.transform.position.y = transform.position.y
+											+ combinedSize;
+									if (collider.verticalSpeed < 0f) {
+										collider.stopGravity();
+									}
+								} else {
+									collider.transform.position.y = transform.position.y
+											- combinedSize;
+								}
 							} else {
-								collider.transform.position.y = transform.position.y
-										- combinedSize;
-							}
-						} else {
-							if (xOff > 0) {
-								collider.transform.position.x = transform.position.x
-										+ combinedSize;
-							} else {
-								collider.transform.position.x = transform.position.x
-										- combinedSize;
+								if (xOff > 0) {
+									collider.transform.position.x = transform.position.x
+											+ combinedSize;
+								} else {
+									collider.transform.position.x = transform.position.x
+											- combinedSize;
+								}
 							}
 						}
 					}

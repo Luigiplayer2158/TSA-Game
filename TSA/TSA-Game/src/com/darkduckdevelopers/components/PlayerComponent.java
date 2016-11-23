@@ -8,6 +8,7 @@ import net.java.games.input.Controller;
 
 import org.lwjgl.input.Keyboard;
 
+import com.darkduckdevelopers.main.MainGameLoop;
 import com.darkduckdevelopers.render.DisplayManager;
 import com.darkduckdevelopers.util.PropertiesFile;
 
