@@ -9,7 +9,6 @@ import org.lwjgl.util.vector.Vector2f;
 
 import com.darkduckdevelopers.components.CameraComponent;
 import com.darkduckdevelopers.components.CollideComponent;
-import com.darkduckdevelopers.components.DebugComponent;
 import com.darkduckdevelopers.components.PlayerComponent;
 import com.darkduckdevelopers.components.PositionalAnchorComponent;
 import com.darkduckdevelopers.components.RenderComponent;
@@ -77,8 +76,8 @@ public class MainGameLoop {
 		int displayHeight = Integer.parseInt(PropertiesFile.getProperty("display_height"));
 		String displayName = PropertiesFile.getProperty("display_name");
 		escapeKey = Integer.parseInt(PropertiesFile.getProperty("key_escape"));
-		String shaderVertexName = PropertiesFile.getProperty("game_normalVert");
-		String shaderFragmentName = PropertiesFile.getProperty("game_normalFrag");
+		String shaderVertexName = PropertiesFile.getProperty("file_normalVert");
+		String shaderFragmentName = PropertiesFile.getProperty("file_normalFrag");
 
 		DisplayManager.createDisplay(displayWidth, displayHeight, displayName); // Create
 																				// the
@@ -155,9 +154,9 @@ public class MainGameLoop {
 			CollideComponent playerCollider = new CollideComponent(playerTransform, 1, -2f);
 			PlayerComponent playerControl;
 			if (i > 0) {
-				playerControl = new PlayerComponent(playerCollider, ControllerMaster.gamepads[i - 1], 0.7f, 1f, 0.1f);
+				playerControl = new PlayerComponent(playerCollider, ControllerMaster.gamepads[i - 1], 0.7f, 1f);
 			} else {
-				playerControl = new PlayerComponent(playerCollider, null, 0.7f, 1f, 0.1f);
+				playerControl = new PlayerComponent(playerCollider, null, 0.7f, 1f);
 			}
 			player.addComponent(playerRender);
 			player.addComponent(playerControl);
