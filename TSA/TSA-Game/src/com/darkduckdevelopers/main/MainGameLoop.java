@@ -21,6 +21,7 @@ import com.darkduckdevelopers.render.Renderer;
 import com.darkduckdevelopers.shaders.Shader;
 import com.darkduckdevelopers.util.AudioMaster;
 import com.darkduckdevelopers.util.ControllerMaster;
+import com.darkduckdevelopers.util.LevelLoader;
 import com.darkduckdevelopers.util.Loader;
 import com.darkduckdevelopers.util.PropertiesFile;
 import com.darkduckdevelopers.util.Text;
@@ -62,6 +63,7 @@ public class MainGameLoop {
 	 */
 	private static void init() {
 		gameState = 0;
+		
 		/**
 		 * Create the gamepads and clear out values because they like to spike
 		 */
@@ -177,6 +179,7 @@ public class MainGameLoop {
 	}
 	
 	private static void initTemporaryEntities(List<Entity> entities) {
+		//LevelLoader.loadLevel(entities, "weed.txt", loader, renderer);
 		/* Background entity */
 		Entity background = new Entity();
 		TransformComponent backgroundTransform = new TransformComponent(new Vector2f(0f, 0f), 0f, new Vector2f(1f, 1f));
