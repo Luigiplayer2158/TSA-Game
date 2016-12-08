@@ -9,6 +9,7 @@ import net.java.games.input.Controller;
 import org.lwjgl.input.Keyboard;
 
 import com.darkduckdevelopers.render.DisplayManager;
+import com.darkduckdevelopers.util.PropertiesFile;
 
 /**
  * A component adding player controls
@@ -24,8 +25,13 @@ public class PlayerComponent extends BaseComponent {
 	public float speed;
 	public float jumpSpeed;
 	public float deadzone;
+	public int leftKey;
+	public int rightKey;
+	public int jumpKey;
+	public String controllerLR;
+	public String controllerJump;
 	
-	public PlayerComponent(CollideComponent collider, Controller controller, float speed, float jumpSpeed, float deadzone) {
+	public PlayerComponent(CollideComponent collider, Controller controller, float speed, float jumpSpeed) {
 		this.transform = collider.transform;
 		this.collider = collider;
 		this.controller = controller;
@@ -34,10 +40,16 @@ public class PlayerComponent extends BaseComponent {
 			for (Component c : controller.getComponents()) {
 				components.put(c.getName(), c.getIdentifier());
 			}
+			deadzone = Float.parseFloat(PropertiesFile.getProperty("controller_deadzone"));
+			controllerLR = PropertiesFile.getProperty("controller_leftHor");
+			controllerJump = PropertiesFile.getProperty("controller_jump");
+		} else {
+			leftKey = Integer.parseInt(PropertiesFile.getProperty("key_left"));
+			rightKey = Integer.parseInt(PropertiesFile.getProperty("key_right"));
+			jumpKey = Integer.parseInt(PropertiesFile.getProperty("key_jump"));
 		}
 		this.speed = speed;
 		this.jumpSpeed = jumpSpeed;
-		this.deadzone = deadzone;
 	}
 
 	// Calculate the movement of the player
@@ -47,22 +59,22 @@ public class PlayerComponent extends BaseComponent {
 		float dx = 0f;
 		if (controller == null) {
 			// If there is no controller, use keyboard input
-			if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
+			if (Keyboard.isKeyDown(leftKey)) {
 				dx -= speed * DisplayManager.getFrameTimeSeconds();
 			}
-			if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
+			if (Keyboard.isKeyDown(rightKey)) {
 				dx += speed * DisplayManager.getFrameTimeSeconds();
 			}
-			if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && collider.isGrounded) {
+			if (Keyboard.isKeyDown(jumpKey) && collider.isGrounded) {
 				collider.verticalSpeed = jumpSpeed;
 			}
 		} else {
 			// Use controller LStick to move
-			if (Math.abs(controller.getComponent(components.get("X Axis")).getPollData()) > deadzone) {
-				dx += controller.getComponent(components.get("X Axis")).getPollData() * speed
+			if (Math.abs(controller.getComponent(components.get(controllerLR)).getPollData()) > deadzone) {
+				dx += controller.getComponent(components.get(controllerLR)).getPollData() * speed
 						* DisplayManager.getFrameTimeSeconds();
 			}
-			if (controller.getComponent(components.get("Button 1")).getPollData() > 0.5f && collider.isGrounded) {
+			if (controller.getComponent(components.get(controllerJump)).getPollData() > 0.5f && collider.isGrounded) {
 				collider.verticalSpeed = jumpSpeed;
 			}
 		}

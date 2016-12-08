@@ -20,11 +20,14 @@ public class CollideComponent extends BaseComponent {
 	public float verticalSpeed;
 	public boolean isGrounded;
 	public int colliderType;
+	public int hitBy = -1;
+
 	// 0 - ground
 	// 1 - player
 	// 2 - other
 
-	public CollideComponent(TransformComponent transform, int colliderType, float gravity) {
+	public CollideComponent(TransformComponent transform, int colliderType,
+			float gravity) {
 		this.transform = transform;
 		this.colliderType = colliderType;
 		if (entities == null) {
@@ -38,7 +41,7 @@ public class CollideComponent extends BaseComponent {
 		}
 		this.gravity = gravity;
 	}
-	
+
 	public CollideComponent(PlayerComponent player, float gravity) {
 		this.transform = player.transform;
 		this.colliderType = 1;
@@ -58,26 +61,35 @@ public class CollideComponent extends BaseComponent {
 	public void tick() {
 		isGrounded = false;
 		verticalSpeed += gravity * DisplayManager.getFrameTimeSeconds();
-		transform.position.y += verticalSpeed * DisplayManager.getFrameTimeSeconds();
+		transform.position.y += verticalSpeed
+				* DisplayManager.getFrameTimeSeconds();
 		for (CollideComponent collider : entities) {
-			if (colliderType != collider.colliderType && collider.colliderType != 0) {
-				float xOff = collider.transform.position.x - transform.position.x;
+			if (colliderType != collider.colliderType
+					&& collider.colliderType != 0) {
+				float xOff = collider.transform.position.x
+						- transform.position.x;
 				float combinedSize = collider.size + size;
 				if (Math.abs(xOff) <= combinedSize) {
-					float yOff = collider.transform.position.y - transform.position.y;
+					float yOff = collider.transform.position.y
+							- transform.position.y;
 					if (Math.abs(yOff) <= combinedSize) {
+						collider.hit(colliderType);
 						if (Math.abs(yOff) > Math.abs(xOff) - 0.01f) {
 							if (yOff > 0) {
-								collider.transform.position.y = transform.position.y + combinedSize;
+								collider.transform.position.y = transform.position.y
+										+ combinedSize;
 								collider.stopGravity();
 							} else {
-								collider.transform.position.y = transform.position.y - combinedSize;
+								collider.transform.position.y = transform.position.y
+										- combinedSize;
 							}
 						} else {
 							if (xOff > 0) {
-								collider.transform.position.x = transform.position.x + combinedSize;
+								collider.transform.position.x = transform.position.x
+										+ combinedSize;
 							} else {
-								collider.transform.position.x = transform.position.x - combinedSize;
+								collider.transform.position.x = transform.position.x
+										- combinedSize;
 							}
 						}
 					}
@@ -85,10 +97,14 @@ public class CollideComponent extends BaseComponent {
 			}
 		}
 	}
-	
+
 	public void stopGravity() {
 		verticalSpeed = 0f;
 		isGrounded = true;
+	}
+
+	public void hit(int hitter) {
+		hitBy = hitter;
 	}
 
 }

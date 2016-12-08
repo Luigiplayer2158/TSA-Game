@@ -35,10 +35,13 @@ public class PropertiesFile {
 		String currentLine;
 		try {
 			while ((currentLine = reader.readLine()) != null) {
-				String[] splitLine = currentLine.split("="); // Split the line
-																// at the =
-				properties.put(splitLine[0], splitLine[1]); // Index the
-															// property
+				if (!currentLine.startsWith("//")) {
+					String[] splitLine = currentLine.split("="); // Split the
+																	// line
+																	// at the =
+					properties.put(splitLine[0], splitLine[1]); // Index the
+																// property
+				}
 			}
 		} catch (IOException e) {
 			System.err

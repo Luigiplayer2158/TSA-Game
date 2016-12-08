@@ -2,7 +2,15 @@ display_width=888
 display_height=666
 display_name=high noon somewhere
 file_font=glyphs.png
+file_normalVert=/com/darkduckdevelopers/shaders/vertexShader
+file_normalFrag=/com/darkduckdevelopers/shaders/fragmentShader
 game_debug=true
-game_normalVert=/com/darkduckdevelopers/shaders/vertexShader
-game_normalFrag=/com/darkduckdevelopers/shaders/fragmentShader
+// Key codes can be found on minecraft.gamepedia.com/Key_codes
 key_escape=1
+key_left=30
+key_right=32
+key_jump=57
+// All controller codes are in controller guide.txt
+controller_deadzone=0.1f;
+controller_leftHor=X Axis
+controller_jump=Button 1
