@@ -5,7 +5,8 @@ file_font=glyphs.png
 file_normalVert=/com/darkduckdevelopers/shaders/vertexShader
 file_normalFrag=/com/darkduckdevelopers/shaders/fragmentShader
 game_debug=true
-// Key codes can be found on minecraft.gamepedia.com/Key_codes
+game_gravity=-2
+// Search for these, they aren't the default Java ones in every case
 key_escape=1
 key_left=30
 key_right=32
