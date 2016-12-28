@@ -6,6 +6,10 @@ file_normalVert=/com/darkduckdevelopers/shaders/vertexShader
 file_normalFrag=/com/darkduckdevelopers/shaders/fragmentShader
 game_debug=true
 game_gravity=-2
+texture_0=player.png
+texture_1=player.png
+texture_2=player.png
+texture_3=player.png
 // Search for these, they aren't the default Java ones in every case
 key_escape=1
 key_left=30
