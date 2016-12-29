@@ -31,7 +31,7 @@ public class PlayerComponent extends BaseComponent {
 	public String controllerLR;
 	public String controllerJump;
 	
-	public PlayerComponent(CollideComponent collider, Controller controller, float speed, float jumpSpeed) {
+	public PlayerComponent(CollideComponent collider, Controller controller) {
 		this.transform = collider.transform;
 		this.collider = collider;
 		this.controller = controller;
@@ -48,8 +48,8 @@ public class PlayerComponent extends BaseComponent {
 			rightKey = Integer.parseInt(PropertiesFile.getProperty("key_right"));
 			jumpKey = Integer.parseInt(PropertiesFile.getProperty("key_jump"));
 		}
-		this.speed = speed;
-		this.jumpSpeed = jumpSpeed;
+		this.speed = Float.parseFloat(PropertiesFile.getProperty("game_playerSpeed"));
+		this.jumpSpeed = Float.parseFloat(PropertiesFile.getProperty("game_playerJump"));
 	}
 
 	// Calculate the movement of the player

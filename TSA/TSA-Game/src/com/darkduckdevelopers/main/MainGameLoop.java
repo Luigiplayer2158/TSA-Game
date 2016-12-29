@@ -45,10 +45,9 @@ public class MainGameLoop {
 
 	private static int gameState;
 	private static int escapeKey;
-	
-	private static TransformComponent PROJECTILE_TRANSFORM;
-	private static TransformComponent PLAYER_TRANSFORM;
-	private static FollowerComponent RETICLE;
+	private static float unitSize;
+	private static float gravity;
+	private static boolean debug;
 
 	/**
 	 * The entry point of execution
@@ -71,16 +70,10 @@ public class MainGameLoop {
 		gameState = 0;
 
 		/**
-		 * Create the gamepads and clear out values because they like to spike
-		 */
-		ControllerMaster.getControllers();
-		ControllerMaster.tick();
-		ControllerMaster.tick();
-
-		/**
-		 * Read the properties file and create vars from it
+		 * Read the properties file
 		 */
 		PropertiesFile.readFile("properties.txt");
+		// Init variables
 		int displayWidth = Integer.parseInt(PropertiesFile
 				.getProperty("display_width"));
 		int displayHeight = Integer.parseInt(PropertiesFile
@@ -90,6 +83,18 @@ public class MainGameLoop {
 		String shaderVertexName = PropertiesFile.getProperty("file_normalVert");
 		String shaderFragmentName = PropertiesFile
 				.getProperty("file_normalFrag");
+		// Global variables
+		unitSize = Float
+				.parseFloat(PropertiesFile.getProperty("game_unitSize"));
+		gravity = Float.parseFloat(PropertiesFile.getProperty("game_gravity"));
+		debug = Boolean.parseBoolean(PropertiesFile.getProperty("game_debug"));
+
+		/**
+		 * Create the gamepads and clear out values because they like to spike
+		 */
+		ControllerMaster.getControllers();
+		ControllerMaster.tick();
+		ControllerMaster.tick();
 
 		DisplayManager.createDisplay(displayWidth, displayHeight, displayName,
 				true); // Create
@@ -138,10 +143,6 @@ public class MainGameLoop {
 			gameState = 0;
 		} else if (Keyboard.isKeyDown(Keyboard.KEY_1)) {
 			gameState = 1;
-		} else if (Keyboard.isKeyDown(Keyboard.KEY_2)) {
-			RETICLE.retarget(PLAYER_TRANSFORM);
-		} else if (Keyboard.isKeyDown(Keyboard.KEY_3)) {
-			RETICLE.retarget(PROJECTILE_TRANSFORM);
 		}
 		DisplayManager.update(); // Update the screen
 	}
@@ -157,28 +158,28 @@ public class MainGameLoop {
 		System.exit(0); // Exit because it's technically still looping
 	}
 
-	// //////////////////////////////////////////
+	// /////////////////////////////////////////
 	// WARNING: IMMENSE ENTITY CREATION BELOW //
-	// //////////////////////////////////////////
+	// /////////////////////////////////////////
 
 	private static void initPermanantEntities(List<Entity> entities) {
 		/* Player entity */
+		TransformComponent playerTransform = null;
 		for (int i = 0; i < ControllerMaster.gamepads.length + 1; i++) {
 			Entity player = new Entity();
-			PLAYER_TRANSFORM = new TransformComponent(new Vector2f(0f, 0f), 0f,
-					new Vector2f(0.1f, 0.1f));
+			playerTransform = new TransformComponent(new Vector2f(0f, 0f), 0f,
+					new Vector2f(unitSize, unitSize));
 			RenderComponent playerRender = new RenderComponent(renderer,
-					PLAYER_TRANSFORM, new ShapeTexture(
+					playerTransform, new ShapeTexture(
 							loader.loadTexture("player.png")), 0, true);
 			CollideComponent playerCollider = new CollideComponent(
-					PLAYER_TRANSFORM, 1, -2f);
+					playerTransform, 1, -2f);
 			PlayerComponent playerControl;
 			if (i > 0) {
 				playerControl = new PlayerComponent(playerCollider,
-						ControllerMaster.gamepads[i - 1], 0.7f, 1f);
+						ControllerMaster.gamepads[i - 1]);
 			} else {
-				playerControl = new PlayerComponent(playerCollider, null, 0.7f,
-						1f);
+				playerControl = new PlayerComponent(playerCollider, null);
 			}
 			player.addComponent(playerRender);
 			player.addComponent(playerControl);
@@ -196,20 +197,20 @@ public class MainGameLoop {
 		camera.addComponent(cameraComp);
 		permanantGameEntities.add(camera);
 		PositionalAnchorComponent anchor = new PositionalAnchorComponent(
-				PLAYER_TRANSFORM, cameraTransform);
+				playerTransform, cameraTransform);
 		camera.addComponent(anchor);
 		/* Reticle */
 		Entity reticle = new Entity();
 		TransformComponent reticleTransform = new TransformComponent(
-				new Vector2f(0f, 0f), 0f, new Vector2f(0.1f, 0.1f));
+				new Vector2f(0f, 0f), 0f, new Vector2f(unitSize, unitSize));
 		RenderComponent reticleRender = new RenderComponent(renderer,
 				reticleTransform, new ShapeTexture(
 						loader.loadTexture("reticle.png")), 0, true);
-		RETICLE = new FollowerComponent(
-				reticleTransform, PLAYER_TRANSFORM);
+		FollowerComponent reticleFollower = new FollowerComponent(
+				reticleTransform, playerTransform);
 		SpinComponent reticleSpin = new SpinComponent(reticleTransform, 180f);
 		reticle.addComponent(reticleRender);
-		reticle.addComponent(RETICLE);
+		reticle.addComponent(reticleFollower);
 		reticle.addComponent(reticleSpin);
 		permanantGameEntities.add(reticle);
 	}
@@ -234,8 +235,9 @@ public class MainGameLoop {
 			for (int j = 0; j < 5; j++) {
 				Entity ground = new Entity();
 				TransformComponent transform = new TransformComponent(
-						new Vector2f(-0.9f + (i * 0.2f), -0.9f - j * 0.2f), 0f,
-						new Vector2f(0.1f, 0.1f));
+						new Vector2f((-unitSize * 9) + (i * unitSize * 2),
+								(-unitSize * 9) - (j * unitSize * 2)), 0f,
+						new Vector2f(unitSize, unitSize));
 				RenderComponent render = new RenderComponent(renderer,
 						transform, groundTexture, 0, true);
 				ground.addComponent(render);
@@ -249,15 +251,16 @@ public class MainGameLoop {
 		}
 		/* Projectile */
 		Entity testProjectile = new Entity();
-		PROJECTILE_TRANSFORM = new TransformComponent(
-				new Vector2f(0f, 0f), 0f, new Vector2f(0.05f, 0.05f));
+		TransformComponent projectileTransform = new TransformComponent(
+				new Vector2f(0f, 0f), 0f, new Vector2f(unitSize / 2f,
+						unitSize / 2f));
 		RenderComponent projectileRender = new RenderComponent(renderer,
-				PROJECTILE_TRANSFORM, new ShapeTexture(
+				projectileTransform, new ShapeTexture(
 						loader.loadTexture("fireball.png")), 0, true);
 		CollideComponent projectileCollide = new CollideComponent(
-				PROJECTILE_TRANSFORM, 2, -2f);
+				projectileTransform, 2, gravity);
 		ProjectileComponent projectile = new ProjectileComponent(
-				PROJECTILE_TRANSFORM, projectileCollide);
+				projectileTransform, projectileCollide);
 		testProjectile.addComponent(projectileRender);
 		testProjectile.addComponent(projectileCollide);
 		testProjectile.addComponent(projectile);
@@ -268,7 +271,8 @@ public class MainGameLoop {
 		/* Title entity */
 		Entity title = new Entity();
 		TransformComponent titleTransform = new TransformComponent(
-				new Vector2f(0f, 0.5f), 0f, new Vector2f(0.8f, 0.8f));
+				new Vector2f(0f, 0.5f), 0f, new Vector2f(unitSize * 8,
+						unitSize * 8));
 		RenderComponent titleRender = new RenderComponent(renderer,
 				titleTransform, new ShapeTexture(
 						loader.loadTexture("title.png")), 0, false);

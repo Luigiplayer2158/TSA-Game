@@ -35,7 +35,8 @@ public class PropertiesFile {
 		String currentLine;
 		try {
 			while ((currentLine = reader.readLine()) != null) {
-				if (!currentLine.startsWith("//")) {
+				if (!currentLine.startsWith("//")
+						&& !currentLine.trim().equals("")) {
 					String[] splitLine = currentLine.split("="); // Split the
 																	// line
 																	// at the =

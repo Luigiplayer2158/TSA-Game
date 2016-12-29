@@ -1,27 +1,36 @@
 display_width=888
 display_height=666
 display_name=high noon somewhere
+
 file_font=glyphs.png
 file_normalVert=/com/darkduckdevelopers/shaders/vertexShader
 file_normalFrag=/com/darkduckdevelopers/shaders/fragmentShader
+
 game_debug=true
 game_gravity=-2
+game_unitSize=0.1
+game_playerSpeed=0.7
+game_playerJump=1
 game_reticleSpeed=0.7
 game_reticleLock=0.4
+
 texture_0=player.png
 texture_1=player.png
 texture_2=player.png
 texture_3=player.png
+
 // Search for these, they aren't the default Java ones in every case
 key_escape=1
 key_left=30
 key_right=32
 key_jump=57
+
 // All controller codes are in controller guide.txt
 // PS4
 controller_wireless controller_deadzone=0.1
 controller_wireless controller_leftHor=X Axis
 controller_wireless controller_jump=Button 1
+
 // XBOX 360
 controller_controller (xbox 360 for windows)_deadzone=0.1
 controller_controller (xbox 360 for windows)_leftHor=X Axis
