@@ -1,5 +1,8 @@
 package com.darkduckdevelopers.render;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.ContextAttribs;
@@ -16,33 +19,69 @@ public class DisplayManager {
 
 	private static long previousTime;
 	private static float delta;
+	private static int width;
+	private static int height;
 
 	/**
 	 * Create a new LWJGL display
 	 * 
 	 * @param width
-	 *            The width of the display
+	 *            The width of the display when windowed
 	 * @param height
-	 *            The height of the display
+	 *            The height of the display when windowed
 	 * @param name
 	 *            The title of the display
+	 * @param fullscreen
+	 *            Whether or not the display is fullscreen
 	 */
-	public static void createDisplay(int width, int height, String name) {
+	public static void createDisplay(int width, int height, String name,
+			boolean fullscreen) {
 		try {
 			ContextAttribs attribs = new ContextAttribs(3, 2)
 					.withForwardCompatible(true).withProfileCore(true); // Set
 																		// OpenGL
 																		// version
-			Display.setDisplayMode(new DisplayMode(width, height)); // Set
-																	// display
-																	// dimensions
+			DisplayManager.width = width;
+			DisplayManager.height = height;
+			setFullscreen(fullscreen);
 			Display.setTitle(name); // Set display title
-			Display.create(new PixelFormat(), attribs); // Create the display
+			Display.create(new PixelFormat(8, 8, 0, 0), attribs); // Create the
+																	// display
 			Display.setVSyncEnabled(true); // Enable VSync
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 		}
 		previousTime = Sys.getTime() * 1000 / Sys.getTimerResolution();
+	}
+
+	/**
+	 * Set whether or not the display is fullscreen
+	 * 
+	 * @param fullscreen
+	 *            To fullscreen or not to fullscreen
+	 * @throws LWJGLException
+	 *             Exception from display modes
+	 */
+	public static void setFullscreen(boolean fullscreen) throws LWJGLException {
+		if (!fullscreen) {
+			Display.setDisplayMode(new DisplayMode(width, height)); // Non-fullscreen
+		} else {
+			DisplayMode[] displayModes = Display.getAvailableDisplayModes(); // Get
+																				// display
+																				// modes
+																				// possible
+			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); // Get
+																				// monitor
+																				// size
+			for (DisplayMode dm : displayModes) { // Cycle through modes
+				if (screenSize.height == dm.getHeight()
+						&& screenSize.width == dm.getWidth()) {
+					Display.setDisplayMode(dm); // Set fullscreen mode
+					Display.setFullscreen(true); // Tell the OS to remove
+													// borders
+				}
+			}
+		}
 	}
 
 	/**

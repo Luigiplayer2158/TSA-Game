@@ -85,7 +85,7 @@ public class MainGameLoop {
 		String shaderFragmentName = PropertiesFile
 				.getProperty("file_normalFrag");
 
-		DisplayManager.createDisplay(displayWidth, displayHeight, displayName); // Create
+		DisplayManager.createDisplay(displayWidth, displayHeight, displayName, true); // Create
 																				// the
 																				// display
 		shader = new Shader(shaderVertexName, shaderFragmentName); // Initialize
@@ -227,7 +227,7 @@ public class MainGameLoop {
 				new Vector2f(0f, 0f), 0f, new Vector2f(0.05f, 0.05f));
 		RenderComponent projectileRender = new RenderComponent(renderer,
 				projectileTransform, new ShapeTexture(
-						loader.loadTexture("sprites.png")), 0, true);
+						loader.loadTexture("fireball.png")), 0, true);
 		CollideComponent projectileCollide = new CollideComponent(
 				projectileTransform, 2, -2f);
 		ProjectileComponent projectile = new ProjectileComponent(
