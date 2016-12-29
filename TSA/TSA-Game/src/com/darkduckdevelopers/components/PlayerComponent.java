@@ -40,9 +40,9 @@ public class PlayerComponent extends BaseComponent {
 			for (Component c : controller.getComponents()) {
 				components.put(c.getName(), c.getIdentifier());
 			}
-			deadzone = Float.parseFloat(PropertiesFile.getProperty("controller_deadzone"));
-			controllerLR = PropertiesFile.getProperty("controller_leftHor");
-			controllerJump = PropertiesFile.getProperty("controller_jump");
+			deadzone = Float.parseFloat(PropertiesFile.getProperty("controller_" + controller.getName().toLowerCase() + "_deadzone"));
+			controllerLR = PropertiesFile.getProperty("controller_" + controller.getName().toLowerCase() + "_leftHor");
+			controllerJump = PropertiesFile.getProperty("controller_" + controller.getName().toLowerCase() + "_jump");
 		} else {
 			leftKey = Integer.parseInt(PropertiesFile.getProperty("key_left"));
 			rightKey = Integer.parseInt(PropertiesFile.getProperty("key_right"));

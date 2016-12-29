@@ -33,7 +33,8 @@ public class LevelImporter {
 					Class.class.getResourceAsStream(levelFile));
 			reader = new BufferedReader(isr);
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.err.println("Level not found! " + levelFile);
+			return;
 		}
 
 		// Read through file
@@ -42,8 +43,8 @@ public class LevelImporter {
 			try {
 				line = reader.readLine();
 			} catch (Exception e) {
-
 				e.printStackTrace();
+				break;
 			}
 
 			// Create a 9 x N 2D array and store tile information
