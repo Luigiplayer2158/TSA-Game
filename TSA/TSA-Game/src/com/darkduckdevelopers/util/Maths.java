@@ -32,14 +32,13 @@ public class Maths {
 		// The operations are in the opposite of what would seem like correct
 		// order because the shader will be calculating the transformation in
 		// reverse
+		Matrix4f.scale(cachedAspect, matrix, matrix);
 		Matrix4f.translate(new Vector3f(transform.position.x,
-				transform.position.y * cachedAspect.y, 0f), matrix, matrix);
+				transform.position.y, 0f), matrix, matrix);
 		Matrix4f.rotate((float) (Math.toRadians(transform.rotation)),
 				new Vector3f(0, 0, 1), matrix, matrix);
 		Matrix4f.scale(new Vector3f(transform.size.x, transform.size.y, 0),
 				matrix, matrix);
-		
-		Matrix4f.scale(cachedAspect, matrix, matrix);
 		return matrix;
 	}
 

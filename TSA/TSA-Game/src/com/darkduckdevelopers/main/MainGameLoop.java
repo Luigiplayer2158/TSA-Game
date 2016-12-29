@@ -14,6 +14,7 @@ import com.darkduckdevelopers.components.PlayerComponent;
 import com.darkduckdevelopers.components.PositionalAnchorComponent;
 import com.darkduckdevelopers.components.ProjectileComponent;
 import com.darkduckdevelopers.components.RenderComponent;
+import com.darkduckdevelopers.components.SpinComponent;
 import com.darkduckdevelopers.components.TransformComponent;
 import com.darkduckdevelopers.objects.Entity;
 import com.darkduckdevelopers.objects.ShapeTexture;
@@ -199,8 +200,10 @@ public class MainGameLoop {
 						loader.loadTexture("reticle.png")), 0, true);
 		FollowerComponent reticleFollower = new FollowerComponent(
 				reticleTransform, playerTransform);
+		SpinComponent reticleSpin = new SpinComponent(reticleTransform, 180f);
 		reticle.addComponent(reticleRender);
 		reticle.addComponent(reticleFollower);
+		reticle.addComponent(reticleSpin);
 		permanantGameEntities.add(reticle);
 	}
 
