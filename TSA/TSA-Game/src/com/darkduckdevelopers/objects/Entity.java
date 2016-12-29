@@ -17,10 +17,13 @@ public class Entity {
 	/**
 	 * Update all components of this entity
 	 */
-	public void update() {
+	public boolean update() {
+		boolean active = false;
 		for (BaseComponent comp : components) {
 			comp.tick();
+			active = true;
 		}
+		return active;
 	}
 
 	/**

@@ -42,6 +42,7 @@ public class MainGameLoop {
 	private static List<Entity> temporaryGameEntities = new ArrayList<Entity>();
 	private static List<Entity> permanantGameEntities = new ArrayList<Entity>();
 	private static List<Entity> menuEntities = new ArrayList<Entity>();
+	private static List<Entity> usefulEntities = new ArrayList<Entity>();
 
 	private static int gameState;
 	private static int escapeKey;
@@ -125,16 +126,28 @@ public class MainGameLoop {
 			for (Entity e : temporaryGameEntities) { // Loop through all
 														// level-specific
 														// entities
-				e.update(); // Update entity's components
+				if (e.update()) { // Update entity's components
+					usefulEntities.add(e);
+				}
 			}
+			temporaryGameEntities = usefulEntities; // Garbage collection
+			usefulEntities.clear();
 			for (Entity e : permanantGameEntities) { // Things like the player
-				e.update();
+				if (e.update()) {
+					usefulEntities.add(e);
+				}
 			}
+			permanantGameEntities = usefulEntities;
+			usefulEntities.clear();
 		}
 		if (gameState == 0) {
 			for (Entity e : menuEntities) { // Menu screen stuff
-				e.update();
+				if (e.update()) {
+					usefulEntities.add(e);
+				}
 			}
+			menuEntities = usefulEntities;
+			usefulEntities.clear();
 		}
 		if (Keyboard.isKeyDown(escapeKey) || Display.isCloseRequested()) {
 			stop(); // Stop the game
