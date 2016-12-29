@@ -9,6 +9,7 @@ import org.lwjgl.util.vector.Vector2f;
 
 import com.darkduckdevelopers.components.CameraComponent;
 import com.darkduckdevelopers.components.CollideComponent;
+import com.darkduckdevelopers.components.FollowerComponent;
 import com.darkduckdevelopers.components.PlayerComponent;
 import com.darkduckdevelopers.components.PositionalAnchorComponent;
 import com.darkduckdevelopers.components.ProjectileComponent;
@@ -85,9 +86,10 @@ public class MainGameLoop {
 		String shaderFragmentName = PropertiesFile
 				.getProperty("file_normalFrag");
 
-		DisplayManager.createDisplay(displayWidth, displayHeight, displayName, true); // Create
-																				// the
-																				// display
+		DisplayManager.createDisplay(displayWidth, displayHeight, displayName,
+				true); // Create
+		// the
+		// display
 		shader = new Shader(shaderVertexName, shaderFragmentName); // Initialize
 																	// shader
 		loader = new Loader(); // Initialize loader
@@ -188,10 +190,23 @@ public class MainGameLoop {
 		PositionalAnchorComponent anchor = new PositionalAnchorComponent(
 				playerTransform, cameraTransform);
 		camera.addComponent(anchor);
+		/* Reticle */
+		Entity reticle = new Entity();
+		TransformComponent reticleTransform = new TransformComponent(
+				new Vector2f(0f, 0f), 0f, new Vector2f(0.1f, 0.1f));
+		RenderComponent reticleRender = new RenderComponent(renderer,
+				reticleTransform, new ShapeTexture(
+						loader.loadTexture("reticle.png")), 0, true);
+		FollowerComponent reticleFollower = new FollowerComponent(
+				reticleTransform, playerTransform);
+		reticle.addComponent(reticleRender);
+		reticle.addComponent(reticleFollower);
+		permanantGameEntities.add(reticle);
 	}
 
 	private static void initTemporaryEntities(List<Entity> entities) {
-		LevelImporter.loadLevel(entities, "/com/darkduckdevelopers/res/test.txt", loader, renderer);
+		LevelImporter.loadLevel(entities,
+				"/com/darkduckdevelopers/res/test.txt", loader, renderer);
 		/* Background entity */
 		Entity background = new Entity();
 		TransformComponent backgroundTransform = new TransformComponent(
@@ -222,6 +237,7 @@ public class MainGameLoop {
 				temporaryGameEntities.add(ground);
 			}
 		}
+		/* Projectile */
 		Entity testProjectile = new Entity();
 		TransformComponent projectileTransform = new TransformComponent(
 				new Vector2f(0f, 0f), 0f, new Vector2f(0.05f, 0.05f));
