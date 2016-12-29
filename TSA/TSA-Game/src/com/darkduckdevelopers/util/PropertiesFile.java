@@ -46,7 +46,7 @@ public class PropertiesFile {
 			}
 		} catch (IOException e) {
 			System.err
-					.println("[ERROR] There was a problem with reading the properties file!");
+					.println("There was a problem with reading the properties file!");
 			e.printStackTrace();
 		}
 	}
