@@ -13,6 +13,7 @@ import com.darkduckdevelopers.components.BaseComponent;
 public class Entity {
 
 	private List<BaseComponent> components = new ArrayList<BaseComponent>();
+	private boolean killed;
 
 	/**
 	 * Update all components of this entity
@@ -26,6 +27,12 @@ public class Entity {
 		return active;
 	}
 
+	// Kill an entity, it will be collected
+	public void kill() {
+		components.clear();
+		killed = true;
+	}
+
 	/**
 	 * Add a component to this entity
 	 * 
@@ -33,7 +40,9 @@ public class Entity {
 	 *            The component to add
 	 */
 	public void addComponent(BaseComponent comp) {
-		components.add(comp);
+		if (!killed) { // Nothing can save the dead entities
+			components.add(comp);
+		}
 	}
 
 }
