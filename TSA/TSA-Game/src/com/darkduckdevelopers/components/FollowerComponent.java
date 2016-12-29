@@ -1,6 +1,7 @@
 package com.darkduckdevelopers.components;
 
 import com.darkduckdevelopers.render.DisplayManager;
+import com.darkduckdevelopers.util.PropertiesFile;
 
 /**
  * A component that follows another entity and can move
@@ -11,7 +12,9 @@ public class FollowerComponent extends BaseComponent {
 
 	public TransformComponent targeter;
 	public TransformComponent target;
-	private float distance;
+	public float distance;
+	public float lockSpeed;
+	public float lockThreshold;
 
 	/**
 	 * Create a component to follow another entity
@@ -25,16 +28,19 @@ public class FollowerComponent extends BaseComponent {
 			TransformComponent target) {
 		this.targeter = targeter;
 		this.target = target;
+		distance = 1f;
+		lockSpeed = Float.parseFloat(PropertiesFile.getProperty("game_reticleSpeed"));
+		lockThreshold = Float.parseFloat(PropertiesFile.getProperty("game_reticleLock"));
 	}
 
 	@Override
 	public void tick() {
 		// Change distance to target
 		float delta = 0f;
-		delta = 1 - (distance * 0.3f);
+		delta = 1f - (distance * lockSpeed);
 		if (distance != 0f) {
 			distance -= delta * DisplayManager.getFrameTimeSeconds();
-			if (distance <= 0.2f) {
+			if (distance <= lockThreshold) {
 				distance = 0;
 			}
 		}
@@ -49,6 +55,7 @@ public class FollowerComponent extends BaseComponent {
 	// Set a new target
 	public void retarget(TransformComponent transform) {
 		this.target = transform;
+		distance = 1f;
 	}
 
 }
