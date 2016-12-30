@@ -8,11 +8,11 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector2f;
 
 import com.darkduckdevelopers.components.AutoTargetComponent;
+import com.darkduckdevelopers.components.AverageAnchorComponent;
 import com.darkduckdevelopers.components.CameraComponent;
 import com.darkduckdevelopers.components.CollideComponent;
 import com.darkduckdevelopers.components.FollowerComponent;
 import com.darkduckdevelopers.components.PlayerComponent;
-import com.darkduckdevelopers.components.PositionalAnchorComponent;
 import com.darkduckdevelopers.components.ProjectileComponent;
 import com.darkduckdevelopers.components.RenderComponent;
 import com.darkduckdevelopers.components.SpinComponent;
@@ -187,11 +187,12 @@ public class MainGameLoop {
 
 	private static void initPermanantEntities(List<Entity> entities) {
 		/* Player entity */
-		TransformComponent playerTransform = null;
+		TransformComponent[] playerTransforms = new TransformComponent[ControllerMaster.gamepads.length + 1];
 		for (int i = 0; i < ControllerMaster.gamepads.length + 1; i++) {
 			Entity player = new Entity();
-			playerTransform = new TransformComponent(new Vector2f(0f, 0f), 0f,
-					new Vector2f(unitSize, unitSize));
+			TransformComponent playerTransform = new TransformComponent(
+					new Vector2f(0f, 0f), 0f, new Vector2f(unitSize, unitSize));
+			playerTransforms[i] = playerTransform;
 			RenderComponent playerRender = new RenderComponent(renderer,
 					playerTransform, new ShapeTexture(
 							loader.loadTexture("player.png")), 0, true);
@@ -240,9 +241,9 @@ public class MainGameLoop {
 		cameraComp.tick();
 		camera.addComponent(cameraComp);
 		permanantGameEntities.add(camera);
-		PositionalAnchorComponent anchor = new PositionalAnchorComponent(
-				playerTransform, cameraTransform);
-		camera.addComponent(anchor);
+		AverageAnchorComponent cameraAnchor = new AverageAnchorComponent(
+				cameraTransform, playerTransforms);
+		camera.addComponent(cameraAnchor);
 		// Try text
 		textMaster.drawText("cheese mcgeez", unitSize / 5f, 0f, -0.5f, true,
 				-1, 100, permanantGameEntities);
