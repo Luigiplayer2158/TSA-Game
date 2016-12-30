@@ -23,10 +23,11 @@ import com.darkduckdevelopers.render.Renderer;
 import com.darkduckdevelopers.shaders.Shader;
 import com.darkduckdevelopers.util.AudioMaster;
 import com.darkduckdevelopers.util.ControllerMaster;
+import com.darkduckdevelopers.util.EntityKiller;
 import com.darkduckdevelopers.util.LevelImporter;
 import com.darkduckdevelopers.util.Loader;
 import com.darkduckdevelopers.util.PropertiesFile;
-import com.darkduckdevelopers.util.Text;
+import com.darkduckdevelopers.util.TextMaster;
 
 /**
  * The main class of our game
@@ -38,6 +39,8 @@ public class MainGameLoop {
 	private static Loader loader;
 	private static Shader shader;
 	private static Renderer renderer;
+	private static EntityKiller killer;
+	private static TextMaster textMaster;
 
 	private static List<Entity> temporaryGameEntities = new ArrayList<Entity>();
 	private static List<Entity> permanantGameEntities = new ArrayList<Entity>();
@@ -98,15 +101,17 @@ public class MainGameLoop {
 		ControllerMaster.tick();
 
 		DisplayManager.createDisplay(displayWidth, displayHeight, displayName,
-				true); // Create
-		// the
-		// display
+				true); // Create the display
 		shader = new Shader(shaderVertexName, shaderFragmentName); // Initialize
 																	// shader
 		loader = new Loader(); // Initialize loader
 		renderer = new Renderer(shader); // Initialize renderer
-		Text.initShape(loader, renderer); // Initialize the data in the text
-											// renderer
+		killer = new EntityKiller();
+		textMaster = new TextMaster(loader, renderer, killer, "file_blackFont"); // Initialize
+																					// the
+		// data in the
+		// text
+		// renderer
 		loader.loadToVAO(Renderer.positions); // Load the quad VAO that will be
 												// used for everything
 		initPermanantEntities(permanantGameEntities);
@@ -130,14 +135,16 @@ public class MainGameLoop {
 					usefulEntities.add(e);
 				}
 			}
-			temporaryGameEntities = usefulEntities; // Garbage collection
+			temporaryGameEntities.clear();
+			temporaryGameEntities.addAll(usefulEntities); // Garbage collection
 			usefulEntities.clear();
 			for (Entity e : permanantGameEntities) { // Things like the player
 				if (e.update()) {
 					usefulEntities.add(e);
 				}
 			}
-			permanantGameEntities = usefulEntities;
+			permanantGameEntities.clear();
+			permanantGameEntities.addAll(usefulEntities);
 			usefulEntities.clear();
 		}
 		if (gameState == 0) {
@@ -146,7 +153,8 @@ public class MainGameLoop {
 					usefulEntities.add(e);
 				}
 			}
-			menuEntities = usefulEntities;
+			menuEntities.clear();
+			menuEntities.addAll(usefulEntities);
 			usefulEntities.clear();
 		}
 		if (Keyboard.isKeyDown(escapeKey) || Display.isCloseRequested()) {
@@ -226,6 +234,9 @@ public class MainGameLoop {
 		reticle.addComponent(reticleFollower);
 		reticle.addComponent(reticleSpin);
 		permanantGameEntities.add(reticle);
+		// Try text
+		textMaster.drawText("cheese mcgeez", unitSize / 5f, 0f, -0.5f, true,
+				-1, 100, permanantGameEntities);
 	}
 
 	private static void initTemporaryEntities(List<Entity> entities) {

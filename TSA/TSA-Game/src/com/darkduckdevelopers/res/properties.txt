@@ -2,7 +2,7 @@ display_width=888
 display_height=666
 display_name=high noon somewhere
 
-file_font=glyphs.png
+file_blackFont=glyphs.png
 file_normalVert=/com/darkduckdevelopers/shaders/vertexShader
 file_normalFrag=/com/darkduckdevelopers/shaders/fragmentShader
 
