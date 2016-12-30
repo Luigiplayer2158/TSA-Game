@@ -45,7 +45,7 @@ public class DisplayManager {
 			DisplayManager.height = height;
 			setFullscreen(fullscreen);
 			Display.setTitle(name); // Set display title
-			Display.create(new PixelFormat(8, 8, 0, 0), attribs); // Create the
+			Display.create(new PixelFormat(), attribs); // Create the
 																	// display
 			Display.setVSyncEnabled(true); // Enable VSync
 		} catch (LWJGLException e) {
