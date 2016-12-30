@@ -29,8 +29,10 @@ public class FollowerComponent extends BaseComponent {
 		this.targeter = targeter;
 		this.target = target;
 		distance = 1f;
-		lockSpeed = Float.parseFloat(PropertiesFile.getProperty("game_reticleSpeed"));
-		lockThreshold = Float.parseFloat(PropertiesFile.getProperty("game_reticleLock"));
+		lockSpeed = Float.parseFloat(PropertiesFile
+				.getProperty("game_reticleSpeed"));
+		lockThreshold = Float.parseFloat(PropertiesFile
+				.getProperty("game_reticleLock"));
 	}
 
 	@Override
@@ -51,11 +53,13 @@ public class FollowerComponent extends BaseComponent {
 		targeter.position.x += dx * delta;
 		targeter.position.y += dy * delta;
 	}
-	
+
 	// Set a new target
 	public void retarget(TransformComponent transform) {
-		this.target = transform;
-		distance = 1f;
+		if (transform != null) {
+			this.target = transform;
+			distance = 1f;
+		}
 	}
 
 }

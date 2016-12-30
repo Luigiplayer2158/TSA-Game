@@ -13,6 +13,9 @@ game_playerSpeed=0.7
 game_playerJump=1
 game_reticleSpeed=0.7
 game_reticleLock=0.4
+game_aimDotTolerance=0.7
+game_aimRangeTolerance=1
+game_aimSelfPrevention=0.02
 
 texture_0=player.png
 texture_1=player.png
@@ -21,17 +24,25 @@ texture_3=player.png
 
 // Search for these, they aren't the default Java ones in every case
 key_escape=1
-key_left=30
-key_right=32
+key_leftMove=30
+key_rightMove=32
 key_jump=57
+key_upAim=200
+key_rightAim=205
+key_downAim=208
+key_leftAim=203
 
 // All controller codes are in controller guide.txt
 // PS4
 controller_wireless controller_deadzone=0.1
 controller_wireless controller_leftHor=X Axis
 controller_wireless controller_jump=Button 1
+controller_wireless controller_aimVert=Z Rotation
+controller_wireless controller_aimHor=Z Axis
 
 // XBOX 360
 controller_controller (xbox 360 for windows)_deadzone=0.1
 controller_controller (xbox 360 for windows)_leftHor=X Axis
 controller_controller (xbox 360 for windows)_jump=Button 0
+controller_controller (xbox 360 for windows)_aimVert=Y Rotation
+controller_controller (xbox 360 for windows)_aimHor=X Rotation

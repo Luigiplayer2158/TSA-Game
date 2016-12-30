@@ -7,6 +7,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector2f;
 
+import com.darkduckdevelopers.components.AutoTargetComponent;
 import com.darkduckdevelopers.components.CameraComponent;
 import com.darkduckdevelopers.components.CollideComponent;
 import com.darkduckdevelopers.components.FollowerComponent;
@@ -15,6 +16,7 @@ import com.darkduckdevelopers.components.PositionalAnchorComponent;
 import com.darkduckdevelopers.components.ProjectileComponent;
 import com.darkduckdevelopers.components.RenderComponent;
 import com.darkduckdevelopers.components.SpinComponent;
+import com.darkduckdevelopers.components.TargetableComponent;
 import com.darkduckdevelopers.components.TransformComponent;
 import com.darkduckdevelopers.objects.Entity;
 import com.darkduckdevelopers.objects.ShapeTexture;
@@ -101,7 +103,7 @@ public class MainGameLoop {
 		ControllerMaster.tick();
 
 		DisplayManager.createDisplay(displayWidth, displayHeight, displayName,
-				true); // Create the display
+				false); // Create the display
 		shader = new Shader(shaderVertexName, shaderFragmentName); // Initialize
 																	// shader
 		loader = new Loader(); // Initialize loader
@@ -202,10 +204,31 @@ public class MainGameLoop {
 			} else {
 				playerControl = new PlayerComponent(playerCollider, null);
 			}
+			TargetableComponent playerTargetable = new TargetableComponent(
+					playerTransform);
 			player.addComponent(playerRender);
 			player.addComponent(playerControl);
 			player.addComponent(playerCollider);
+			player.addComponent(playerTargetable);
 			permanantGameEntities.add(player);
+			// Reticle for player
+			Entity reticle = new Entity();
+			TransformComponent reticleTransform = new TransformComponent(
+					new Vector2f(0f, 0f), 0f, new Vector2f(unitSize, unitSize));
+			RenderComponent reticleRender = new RenderComponent(renderer,
+					reticleTransform, new ShapeTexture(
+							loader.loadTexture("reticle.png")), 0, true);
+			FollowerComponent reticleFollower = new FollowerComponent(
+					reticleTransform, playerTransform);
+			AutoTargetComponent reticleControl = new AutoTargetComponent(
+					reticleFollower, playerControl);
+			SpinComponent reticleSpin = new SpinComponent(reticleTransform,
+					360f);
+			reticle.addComponent(reticleRender);
+			reticle.addComponent(reticleFollower);
+			reticle.addComponent(reticleControl);
+			reticle.addComponent(reticleSpin);
+			permanantGameEntities.add(reticle);
 		}
 
 		/* Camera entity */
@@ -220,20 +243,6 @@ public class MainGameLoop {
 		PositionalAnchorComponent anchor = new PositionalAnchorComponent(
 				playerTransform, cameraTransform);
 		camera.addComponent(anchor);
-		/* Reticle */
-		Entity reticle = new Entity();
-		TransformComponent reticleTransform = new TransformComponent(
-				new Vector2f(0f, 0f), 0f, new Vector2f(unitSize, unitSize));
-		RenderComponent reticleRender = new RenderComponent(renderer,
-				reticleTransform, new ShapeTexture(
-						loader.loadTexture("reticle.png")), 0, true);
-		FollowerComponent reticleFollower = new FollowerComponent(
-				reticleTransform, playerTransform);
-		SpinComponent reticleSpin = new SpinComponent(reticleTransform, 180f);
-		reticle.addComponent(reticleRender);
-		reticle.addComponent(reticleFollower);
-		reticle.addComponent(reticleSpin);
-		permanantGameEntities.add(reticle);
 		// Try text
 		textMaster.drawText("cheese mcgeez", unitSize / 5f, 0f, -0.5f, true,
 				-1, 100, permanantGameEntities);
@@ -270,6 +279,9 @@ public class MainGameLoop {
 							0, 0f);
 					ground.addComponent(collider);
 				}
+				TargetableComponent targetable = new TargetableComponent(
+						transform);
+				ground.addComponent(targetable);
 				temporaryGameEntities.add(ground);
 			}
 		}
@@ -285,9 +297,12 @@ public class MainGameLoop {
 				projectileTransform, 2, gravity);
 		ProjectileComponent projectile = new ProjectileComponent(
 				projectileTransform, projectileCollide);
+		TargetableComponent projectileTargetable = new TargetableComponent(
+				projectileTransform);
 		testProjectile.addComponent(projectileRender);
 		testProjectile.addComponent(projectileCollide);
 		testProjectile.addComponent(projectile);
+		testProjectile.addComponent(projectileTargetable);
 		temporaryGameEntities.add(testProjectile);
 	}
 
