@@ -11,16 +11,18 @@ public class TargetableComponent extends BaseComponent {
 
 	public TransformComponent transform;
 	public boolean isIndexed;
+	public int index;
 	
-	public TargetableComponent(TransformComponent transform) {
+	public TargetableComponent(TransformComponent transform, int index) {
 		this.transform = transform;
+		this.index = index;
 		isIndexed = false;
 	}
 	
 	@Override
 	public void tick() {
 		if (!isIndexed) {
-			AutoTargetComponent.targetableEntities.add(this);
+			AutoTargetComponent.targetableEntities.get(index).add(this);
 			isIndexed = true;
 		}
 	}

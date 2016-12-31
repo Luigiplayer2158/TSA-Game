@@ -12,6 +12,8 @@ import com.darkduckdevelopers.components.AverageAnchorComponent;
 import com.darkduckdevelopers.components.CameraComponent;
 import com.darkduckdevelopers.components.CollideComponent;
 import com.darkduckdevelopers.components.FollowerComponent;
+import com.darkduckdevelopers.components.MenuOptionScrollerComponent;
+import com.darkduckdevelopers.components.MenuTargetableComponent;
 import com.darkduckdevelopers.components.PlayerComponent;
 import com.darkduckdevelopers.components.ProjectileComponent;
 import com.darkduckdevelopers.components.RenderComponent;
@@ -49,11 +51,12 @@ public class MainGameLoop {
 	private static List<Entity> menuEntities = new ArrayList<Entity>();
 	private static List<Entity> usefulEntities = new ArrayList<Entity>();
 
-	private static int gameState;
 	private static int escapeKey;
 	private static float unitSize;
 	private static float gravity;
-	private static boolean debug;
+	
+	public static int gameState;
+	public static boolean debug;
 
 	/**
 	 * The entry point of execution
@@ -116,9 +119,9 @@ public class MainGameLoop {
 		// renderer
 		loader.loadToVAO(Renderer.positions); // Load the quad VAO that will be
 												// used for everything
-		initPermanantEntities(permanantGameEntities);
-		initTemporaryEntities(temporaryGameEntities);
-		initMenuEntities(menuEntities);
+		initPermanantEntities();
+		initTemporaryEntities();
+		initMenuEntities();
 		DisplayManager.update();
 	}
 
@@ -159,13 +162,11 @@ public class MainGameLoop {
 			menuEntities.addAll(usefulEntities);
 			usefulEntities.clear();
 		}
-		if (Keyboard.isKeyDown(escapeKey) || Display.isCloseRequested()) {
-			stop(); // Stop the game
-		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_0)) {
+		if (Keyboard.isKeyDown(escapeKey)) {
 			gameState = 0;
-		} else if (Keyboard.isKeyDown(Keyboard.KEY_1)) {
-			gameState = 1;
+		}
+		if (Display.isCloseRequested()) {
+			stop();
 		}
 		DisplayManager.update(); // Update the screen
 	}
@@ -185,7 +186,7 @@ public class MainGameLoop {
 	// WARNING: IMMENSE ENTITY CREATION BELOW //
 	// /////////////////////////////////////////
 
-	private static void initPermanantEntities(List<Entity> entities) {
+	private static void initPermanantEntities() {
 		/* Player entity */
 		TransformComponent[] playerTransforms = new TransformComponent[ControllerMaster.gamepads.length + 1];
 		for (int i = 0; i < ControllerMaster.gamepads.length + 1; i++) {
@@ -206,7 +207,7 @@ public class MainGameLoop {
 				playerControl = new PlayerComponent(playerCollider, null);
 			}
 			TargetableComponent playerTargetable = new TargetableComponent(
-					playerTransform);
+					playerTransform, 1);
 			player.addComponent(playerRender);
 			player.addComponent(playerControl);
 			player.addComponent(playerCollider);
@@ -222,7 +223,7 @@ public class MainGameLoop {
 			FollowerComponent reticleFollower = new FollowerComponent(
 					reticleTransform, playerTransform);
 			AutoTargetComponent reticleControl = new AutoTargetComponent(
-					reticleFollower, playerControl);
+					reticleFollower, playerControl.controller, 1);
 			SpinComponent reticleSpin = new SpinComponent(reticleTransform,
 					360f);
 			reticle.addComponent(reticleRender);
@@ -233,24 +234,24 @@ public class MainGameLoop {
 		}
 
 		/* Camera entity */
-		Entity camera = new Entity();
+		Entity gameCamera = new Entity();
 		TransformComponent cameraTransform = new TransformComponent(
 				new Vector2f(0f, 0f), 0f, new Vector2f(1f, 1f));
 		CameraComponent cameraComp = new CameraComponent(cameraTransform,
 				renderer);
 		cameraComp.tick();
-		camera.addComponent(cameraComp);
-		permanantGameEntities.add(camera);
+		gameCamera.addComponent(cameraComp);
+		permanantGameEntities.add(gameCamera);
 		AverageAnchorComponent cameraAnchor = new AverageAnchorComponent(
 				cameraTransform, playerTransforms);
-		camera.addComponent(cameraAnchor);
+		gameCamera.addComponent(cameraAnchor);
 		// Try text
 		textMaster.drawText("cheese mcgeez", unitSize / 5f, 0f, -0.5f, true,
 				-1, 100, permanantGameEntities);
 	}
 
-	private static void initTemporaryEntities(List<Entity> entities) {
-		LevelImporter.loadLevel(entities,
+	private static void initTemporaryEntities() {
+		LevelImporter.loadLevel(temporaryGameEntities,
 				"/com/darkduckdevelopers/res/test.txt", loader, renderer);
 		/* Background entity */
 		Entity background = new Entity();
@@ -281,7 +282,7 @@ public class MainGameLoop {
 					ground.addComponent(collider);
 				}
 				TargetableComponent targetable = new TargetableComponent(
-						transform);
+						transform, 1);
 				ground.addComponent(targetable);
 				temporaryGameEntities.add(ground);
 			}
@@ -299,7 +300,7 @@ public class MainGameLoop {
 		ProjectileComponent projectile = new ProjectileComponent(
 				projectileTransform, projectileCollide);
 		TargetableComponent projectileTargetable = new TargetableComponent(
-				projectileTransform);
+				projectileTransform, 1);
 		testProjectile.addComponent(projectileRender);
 		testProjectile.addComponent(projectileCollide);
 		testProjectile.addComponent(projectile);
@@ -307,17 +308,101 @@ public class MainGameLoop {
 		temporaryGameEntities.add(testProjectile);
 	}
 
-	private static void initMenuEntities(List<Entity> entities) {
-		/* Title entity */
+	private static void initMenuEntities() {
+		/* Menu screen transformations */
+		Entity mainScreen = new Entity();
+		TransformComponent mainScreenTransform = new TransformComponent(
+				new Vector2f(0f, 0f), 0f, new Vector2f(1f, 1f));
+		TargetableComponent mainScreenTargetable = new TargetableComponent(
+				mainScreenTransform, 0);
+		mainScreen.addComponent(mainScreenTargetable);
+		menuEntities.add(mainScreen);
+
+		Entity optionsScreen = new Entity();
+		TransformComponent optionsScreenTransform = new TransformComponent(
+				new Vector2f(-2f, 0f), 0f, new Vector2f(1f, 1f));
+		TargetableComponent optionsScreenTargetable = new TargetableComponent(
+				optionsScreenTransform, 0);
+		optionsScreen.addComponent(optionsScreenTargetable);
+		menuEntities.add(optionsScreen);
+
+		/* Camera entity */
+		Entity menuCamera = new Entity();
+		TransformComponent cameraTransform = new TransformComponent(
+				new Vector2f(0f, 0f), 0f, new Vector2f(1f, 1f));
+		CameraComponent cameraComp = new CameraComponent(cameraTransform,
+				renderer);
+		FollowerComponent cameraFollower = new FollowerComponent(
+				cameraTransform, mainScreenTransform);
+		AutoTargetComponent cameraControl = new AutoTargetComponent(
+				cameraFollower, null, 0);
+		menuCamera.addComponent(cameraComp);
+		menuCamera.addComponent(cameraFollower);
+		menuCamera.addComponent(cameraControl);
+		menuEntities.add(menuCamera);
+
+		/* Main menu screen */
 		Entity title = new Entity();
 		TransformComponent titleTransform = new TransformComponent(
-				new Vector2f(0f, 0.5f), 0f, new Vector2f(unitSize * 8,
-						unitSize * 8));
+				new Vector2f(0f, 0.5f), 0f, new Vector2f(unitSize * 8f,
+						unitSize * 8f));
 		RenderComponent titleRender = new RenderComponent(renderer,
 				titleTransform, new ShapeTexture(
-						loader.loadTexture("title.png")), 0, false);
+						loader.loadTexture("title.png")), 0, true);
 		title.addComponent(titleRender);
 		menuEntities.add(title);
+
+		// Main menu buttons
+		Entity playButtonTarget = new Entity();
+		TransformComponent playButtonTargetTransform = new TransformComponent(
+				new Vector2f(-unitSize * 2f, unitSize), 0f,
+				new Vector2f(1f, 1f));
+		MenuTargetableComponent playButtonTargetable = new MenuTargetableComponent(
+				playButtonTargetTransform, 2, 0);
+		playButtonTarget.addComponent(playButtonTargetable);
+		menuEntities.add(playButtonTarget);
+
+		textMaster.drawText("PLAY", unitSize / 2f, -unitSize / 2f, unitSize,
+				true, -1, 100, menuEntities);
+
+		Entity quitButtonTarget = new Entity();
+		TransformComponent quitButtonTargetTransform = new TransformComponent(
+				new Vector2f(-unitSize * 2f, 0f), 0f, new Vector2f(1f, 1f));
+		MenuTargetableComponent quitButtonTargetable = new MenuTargetableComponent(
+				quitButtonTargetTransform, 2, 1);
+		quitButtonTarget.addComponent(quitButtonTargetable);
+		menuEntities.add(quitButtonTarget);
+
+		textMaster.drawText("QUIT", unitSize / 2f, -unitSize / 2f, 0f, true,
+				-1, 100, menuEntities);
+
+		// Main menu targeter
+		Entity buttonTargeter = new Entity();
+		TransformComponent buttonTargeterTransform = new TransformComponent(
+				new Vector2f(-unitSize * 2f, unitSize), 0f, new Vector2f(
+						unitSize / 2f, unitSize / 2f));
+		FollowerComponent buttonTargeterFollower = new FollowerComponent(
+				buttonTargeterTransform, playButtonTargetTransform);
+		MenuOptionScrollerComponent buttonTargeterAimer = new MenuOptionScrollerComponent(
+				buttonTargeterFollower, null, 2);
+		RenderComponent buttonTargeterRender = new RenderComponent(renderer,
+				buttonTargeterTransform, new ShapeTexture(
+						loader.loadTexture("fireball.png")), 0, true);
+		buttonTargeter.addComponent(buttonTargeterFollower);
+		buttonTargeter.addComponent(buttonTargeterAimer);
+		buttonTargeter.addComponent(buttonTargeterRender);
+		menuEntities.add(buttonTargeter);
+
+		/* Options menu screen */
+		Entity optionsTitle = new Entity();
+		TransformComponent optionsTitleTransform = new TransformComponent(
+				new Vector2f(-2f, 0.5f), 0f, new Vector2f(unitSize * 8f,
+						unitSize * 8f));
+		RenderComponent optionsTitleRender = new RenderComponent(renderer,
+				optionsTitleTransform, new ShapeTexture(
+						loader.loadTexture("title.png")), 0, true);
+		optionsTitle.addComponent(optionsTitleRender);
+		menuEntities.add(optionsTitle);
 	}
 
 }

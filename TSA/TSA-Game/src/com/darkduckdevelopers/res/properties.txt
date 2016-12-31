@@ -13,9 +13,16 @@ game_playerSpeed=0.7
 game_playerJump=1
 game_reticleSpeed=0.7
 game_reticleLock=0.4
-game_aimDotTolerance=0.7
-game_aimRangeTolerance=1
-game_aimSelfPrevention=0.02
+game_numTargeters=3
+game_0_aimDotTolerance=0.9
+game_0_aimRangeTolerance=5
+game_0_aimSelfPrevention=0.02
+game_1_aimDotTolerance=0.7
+game_1_aimRangeTolerance=1
+game_1_aimSelfPrevention=0.02
+game_2_aimDotTolerance=0.9
+game_2_aimRangeTolerance=1
+game_2_aimSelfPrevention=0.002
 
 texture_0=player.png
 texture_1=player.png
@@ -31,6 +38,8 @@ key_upAim=200
 key_rightAim=205
 key_downAim=208
 key_leftAim=203
+key_select=45
+key_back=44
 
 // All controller codes are in controller guide.txt
 // PS4
@@ -39,6 +48,8 @@ controller_wireless controller_leftHor=X Axis
 controller_wireless controller_jump=Button 1
 controller_wireless controller_aimVert=Z Rotation
 controller_wireless controller_aimHor=Z Axis
+controller_wireless controller_select=Button 1
+controller_wireless controller_back=Button 2
 
 // XBOX 360
 controller_controller (xbox 360 for windows)_deadzone=0.1
@@ -46,3 +57,5 @@ controller_controller (xbox 360 for windows)_leftHor=X Axis
 controller_controller (xbox 360 for windows)_jump=Button 0
 controller_controller (xbox 360 for windows)_aimVert=Y Rotation
 controller_controller (xbox 360 for windows)_aimHor=X Rotation
+controller_controller (xbox 360 for windows)_select=Button 0
+controller_controller (xbox 360 for windows)_back=Button 2
