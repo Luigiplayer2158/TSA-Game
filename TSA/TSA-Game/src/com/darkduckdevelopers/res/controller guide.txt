@@ -2,6 +2,7 @@ After much messing around, I have discovered the gamepads' various buttons.
 If you have a controller that isn't listed here, please test all of the inputs and write them here.
 
 PS4 (Wireless Controller)
+// Requires a driver, one exists for windows
 // 0 or 1 for a button
 Button 0: Square
 Button 1: X
@@ -26,6 +27,7 @@ Z Axis: RStick L/R
 Z Rotation: RStick U/D
 
 Xbox (Controller (XBOX 360 For Windows))
+// Windows compatible
 // 0 or 1 for a button
 Button 0: A
 Button 1: B
@@ -45,6 +47,7 @@ Y Rotation: RStick U/D
 Z Axis: LT Intensity - RT Intensity
 
 Steelseries Nimbus (Nimbus)
+// Mac compatible
 // 0 to 255 for a button
 x: LStick L/R
 y: LStick U/D
