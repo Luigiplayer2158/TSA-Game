@@ -27,7 +27,7 @@ public class ControllerMaster {
 		for (int i = 0; i < controllers.length; i++) {
 			if (controllers[i].getType().equals(Type.GAMEPAD)) {
 				identifiedControllers.add(controllers[i]);
-				System.out.println(controllers[i].getName() + ": " + controllers[i].getType());
+				System.out.println(controllers[i].getName());
 			}
 		}
 		System.out.println();
