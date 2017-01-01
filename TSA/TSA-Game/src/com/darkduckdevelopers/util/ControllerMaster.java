@@ -3,6 +3,8 @@ package com.darkduckdevelopers.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.darkduckdevelopers.objects.Gamepad;
+
 import net.java.games.input.Controller;
 import net.java.games.input.Controller.Type;
 import net.java.games.input.ControllerEnvironment;
@@ -14,7 +16,7 @@ import net.java.games.input.ControllerEnvironment;
  */
 public class ControllerMaster {
 
-	public static Controller[] gamepads;
+	public static Gamepad[] gamepads;
 
 	/**
 	 * Get all connected gamepads and put them in the gamepad array
@@ -31,9 +33,9 @@ public class ControllerMaster {
 			}
 		}
 		System.out.println();
-		gamepads = new Controller[identifiedControllers.size()];
+		gamepads = new Gamepad[identifiedControllers.size()];
 		for (int i = 0; i < gamepads.length; i++) {
-			gamepads[i] = identifiedControllers.get(i);
+			gamepads[i] = new Gamepad(identifiedControllers.get(i));
 		}
 	}
 
@@ -41,8 +43,8 @@ public class ControllerMaster {
 	 * Poll all gamepads for input
 	 */
 	public static void tick() {
-		for (Controller c : gamepads) {
-			c.poll();
+		for (Gamepad c : gamepads) {
+			c.tick();
 		}
 	}
 

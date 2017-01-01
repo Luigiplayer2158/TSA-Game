@@ -106,7 +106,7 @@ public class MainGameLoop {
 		ControllerMaster.tick();
 
 		DisplayManager.createDisplay(displayWidth, displayHeight, displayName,
-				true); // Create the display
+				false); // Create the display
 		shader = new Shader(shaderVertexName, shaderFragmentName); // Initialize
 																	// shader
 		loader = new Loader(); // Initialize loader
