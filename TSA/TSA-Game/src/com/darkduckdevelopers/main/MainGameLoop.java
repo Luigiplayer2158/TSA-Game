@@ -100,6 +100,7 @@ public class MainGameLoop {
 		gravity = Float.parseFloat(PropertiesFile.getProperty("game_gravity"));
 		debug = Boolean.parseBoolean(PropertiesFile.getProperty("game_debug"));
 		// Splash screen
+		// TODO splash screen
 		splashTime = Float.parseFloat(PropertiesFile.getProperty("game_splashTime"));
 		splashScreen = new Entity();
 		TransformComponent splashTransform = new TransformComponent(new Vector2f(0f, 0f), 0f, new Vector2f(1f, 1f));
