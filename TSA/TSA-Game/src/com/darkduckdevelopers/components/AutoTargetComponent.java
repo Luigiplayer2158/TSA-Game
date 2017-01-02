@@ -77,7 +77,7 @@ public class AutoTargetComponent extends BaseComponent {
 		if (controller != null) {
 			// Controller inputs can be directly put in
 			direction.x = controller.getInput(controllerAimLR);
-			direction.y = controller.getInput(controllerAimUD);
+			direction.y = -controller.getInput(controllerAimUD);
 
 		} else {
 			if (Keyboard.isKeyDown(downKey)) {
@@ -97,6 +97,15 @@ public class AutoTargetComponent extends BaseComponent {
 		// stroke, we dont want the reticle rapidly switching
 		if (controller == null) {
 			if (direction.x != 0f || direction.y != 0f) {
+				if (!hasTargeted) {
+					hasTargeted = true;
+					move(direction);
+				}
+			} else {
+				hasTargeted = false;
+			}
+		} else {
+			if (Math.abs(direction.x) >= controllerDeadzone || Math.abs(direction.y) >= controllerDeadzone) {
 				if (!hasTargeted) {
 					hasTargeted = true;
 					move(direction);
