@@ -6,6 +6,7 @@ file_blackFont=glyphs.png
 file_normalVert=/com/darkduckdevelopers/shaders/vertexShader
 file_normalFrag=/com/darkduckdevelopers/shaders/fragmentShader
 
+game_splashTime=2
 game_debug=true
 game_gravity=-2
 game_unitSize=0.1

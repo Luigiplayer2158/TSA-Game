@@ -46,6 +46,7 @@ public class MainGameLoop {
 	private static EntityKiller killer;
 	private static TextMaster textMaster;
 
+	private static Entity splashScreen;
 	private static List<Entity> temporaryGameEntities = new ArrayList<Entity>();
 	private static List<Entity> permanantGameEntities = new ArrayList<Entity>();
 	private static List<Entity> menuEntities = new ArrayList<Entity>();
@@ -54,6 +55,7 @@ public class MainGameLoop {
 	private static int escapeKey;
 	private static float unitSize;
 	private static float gravity;
+	private static float splashTime;
 	
 	public static int gameState;
 	public static boolean debug;
@@ -97,6 +99,10 @@ public class MainGameLoop {
 				.parseFloat(PropertiesFile.getProperty("game_unitSize"));
 		gravity = Float.parseFloat(PropertiesFile.getProperty("game_gravity"));
 		debug = Boolean.parseBoolean(PropertiesFile.getProperty("game_debug"));
+		// Splash screen
+		splashTime = Float.parseFloat(PropertiesFile.getProperty("game_splashTime"));
+		splashScreen = new Entity();
+		TransformComponent splashTransform = new TransformComponent(new Vector2f(0f, 0f), 0f, new Vector2f(1f, 1f));
 
 		/**
 		 * Create the gamepads and clear out values because they like to spike
@@ -132,7 +138,11 @@ public class MainGameLoop {
 	private static void loop() {
 		ControllerMaster.tick();
 		renderer.prepare(); // Clear the screen
-		if (gameState == 1) {
+		if (gameState == 0) {
+			// A splash screen takes up time, but it will be more impressive
+			splashScreen.update();
+			splashTimer += DisplayManager.getFrameTimeSeconds();
+		} else if (gameState == 1) {
 			for (Entity e : temporaryGameEntities) { // Loop through all
 														// level-specific
 														// entities
@@ -151,8 +161,7 @@ public class MainGameLoop {
 			permanantGameEntities.clear();
 			permanantGameEntities.addAll(usefulEntities);
 			usefulEntities.clear();
-		}
-		if (gameState == 0) {
+		} else if (gameState == 3) {
 			for (Entity e : menuEntities) { // Menu screen stuff
 				if (e.update()) {
 					usefulEntities.add(e);
