@@ -1,0 +1,7 @@
+#container {
+    overflow: scroll;
+    overflow-x: scroll;
+    overflow-y: scroll;
+    max-height: 500px;
+    max-width: 700px;
+}
