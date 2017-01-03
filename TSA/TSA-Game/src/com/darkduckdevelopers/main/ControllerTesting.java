@@ -60,10 +60,10 @@ public class ControllerTesting implements ActionListener {
 				.getDefaultEnvironment().getControllers();
 		int pointer = 0;
 		for (Controller c : controllers) {
-			if (c.getType().equals(Type.GAMEPAD)) {
+			if(c.getType().equals(Type.GAMEPAD) || c.getType().equals(Type.STICK) || c.getType().equals(Type.UNKNOWN)) {
 				controllers[pointer] = c;
 				textAreaBuilder = textAreaBuilder + pointer + ": "
-						+ c.getName() + "\n";
+						+ c.getName() + " - " + c.getType() + "\n";
 				pointer++;
 			}
 		}

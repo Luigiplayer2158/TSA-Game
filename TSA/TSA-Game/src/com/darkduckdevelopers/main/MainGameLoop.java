@@ -78,7 +78,7 @@ public class MainGameLoop {
 	 * Initialize the game and load the resources
 	 */
 	private static void init() {
-		gameState = 0;
+		gameState = 2;
 
 		/**
 		 * Read the properties file
@@ -113,7 +113,7 @@ public class MainGameLoop {
 		ControllerMaster.tick();
 
 		DisplayManager.createDisplay(displayWidth, displayHeight, displayName,
-				false); // Create the display
+				true); // Create the display
 		shader = new Shader(shaderVertexName, shaderFragmentName); // Initialize
 																	// shader
 		loader = new Loader(); // Initialize loader
@@ -142,7 +142,7 @@ public class MainGameLoop {
 		if (gameState == 0) {
 			// A splash screen takes up time, but it will be more impressive
 			splashScreen.update();
-			splashTimer += DisplayManager.getFrameTimeSeconds();
+			splashTime += DisplayManager.getFrameTimeSeconds();
 		} else if (gameState == 1) {
 			for (Entity e : temporaryGameEntities) { // Loop through all
 														// level-specific
@@ -162,7 +162,7 @@ public class MainGameLoop {
 			permanantGameEntities.clear();
 			permanantGameEntities.addAll(usefulEntities);
 			usefulEntities.clear();
-		} else if (gameState == 3) {
+		} else if (gameState == 2) {
 			for (Entity e : menuEntities) { // Menu screen stuff
 				if (e.update()) {
 					usefulEntities.add(e);
@@ -173,7 +173,7 @@ public class MainGameLoop {
 			usefulEntities.clear();
 		}
 		if (Keyboard.isKeyDown(escapeKey)) {
-			gameState = 0;
+			gameState = 2;
 		}
 		if (Display.isCloseRequested()) {
 			stop();

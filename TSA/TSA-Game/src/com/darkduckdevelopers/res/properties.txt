@@ -59,4 +59,4 @@ controller_controller (xbox 360 for windows)_jump=Button 0
 controller_controller (xbox 360 for windows)_aimVert=Y Rotation
 controller_controller (xbox 360 for windows)_aimHor=X Rotation
 controller_controller (xbox 360 for windows)_select=Button 0
-controller_controller (xbox 360 for windows)_back=Button 2
+controller_controller (xbox 360 for windows)_back=Button 1
