@@ -45,6 +45,9 @@ key_back=44
 // All controller codes are in controller guide.txt
 // PS4
 controller_wireless controller_deadzone=0.1
+controller_wireless controller_buttonMax=1
+controller_wireless controller_vertInvert=false;
+controller_wireless controller_stickMax=1
 controller_wireless controller_leftHor=X Axis
 controller_wireless controller_jump=Button 1
 controller_wireless controller_aimVert=Z Rotation
@@ -54,9 +57,24 @@ controller_wireless controller_back=Button 2
 
 // XBOX 360
 controller_controller (xbox 360 for windows)_deadzone=0.1
+controller_controller (xbox 360 for windows)_buttonMax=1
+controller_controller (xbox 360 for windows)_vertInvert=false;
+controller_controller (xbox 360 for windows)_stickMax=1
 controller_controller (xbox 360 for windows)_leftHor=X Axis
 controller_controller (xbox 360 for windows)_jump=Button 0
 controller_controller (xbox 360 for windows)_aimVert=Y Rotation
 controller_controller (xbox 360 for windows)_aimHor=X Rotation
 controller_controller (xbox 360 for windows)_select=Button 0
 controller_controller (xbox 360 for windows)_back=Button 1
+
+// Steelseries
+controller_nimbus_deadzone=0.1
+controller_nimbus_buttonMax=255
+controller_nimbus_vertInvert=true;
+controller_nimbus_stickMax=1
+controller_nimbus_leftHor=x
+controller_nimbus_jump=0
+controller_nimbus_aimVert=rz
+controller_nimbus_aimHor=z
+controller_nimbus_select=0
+controller_nimbus_back=1

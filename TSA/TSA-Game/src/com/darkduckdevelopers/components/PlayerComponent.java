@@ -69,11 +69,11 @@ public class PlayerComponent extends BaseComponent {
 			}
 		} else {
 			// Use controller LStick to move
-			float leftRightInput = controller.getInput(controllerLR);
+			float leftRightInput = controller.getInput(controllerLR, false);
 			if (Math.abs(leftRightInput) > deadzone) {
 				dx += leftRightInput * speed * DisplayManager.getFrameTimeSeconds();
 			}
-			if (controller.getInput(controllerJump) > 0.5f && collider.isGrounded) {
+			if (controller.getInput(controllerJump, true) > 0.5f && collider.isGrounded) {
 				collider.verticalSpeed = jumpSpeed;
 			}
 		}
