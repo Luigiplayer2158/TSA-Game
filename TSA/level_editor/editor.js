@@ -1,20 +1,31 @@
 /* global Blob URL location */
 
+// Get the main element 
 const element = document.getElementById("main")
+
+// Get the 2D context of the main element, which allows drawing onto the canvas
 const canvas = element.getContext("2d")
 
+// The container element will hold the canvas
 const container = document.getElementById("container")
 
+// scroll to the bottom, so we start in the bottom left corner of the level, not the top left
 container.scrollTop = 2517
 
-
+// this is where the level itself will be stored
 const map = []
+
+// the grid is split into 30x30 pixel blocks, so we need to account for that in the loop
 for (let x = 0; x < (element.offsetWidth/30); x++) {
+    // start creating the 2-dimensional array that will hold the level data
     map.push([])
     for (let y = 0; y < element.offsetHeight/30; y++) {
+        // -1 represents an empty block
         map[x][y] = -1
     }
 }
+
+let property = 0
 
 
 const length = map.length-1
@@ -26,12 +37,13 @@ const drawLine = (sx, sy, fx, fy) => {
 }
 
 for (let x = 0; x < element.offsetWidth+1; x += 30) {
+    // draw two lines, one going horizontal, and one going vertical. These sixty lines will create a grid
     drawLine(x,0,element.offsetWidth,x)
     drawLine(0,x,x,element.offsetWidth)
 }
 
 const textures = [{name:"Eraser",src:"https://i.ytimg.com/vi/5hqd3knvcWk/maxresdefault.jpg"},{name:"Dirt",src:"http://texturemate.com/image/view/1441/_original",}, {name:"Water",src:"http://www.topdesignmag.com/wp-content/uploads/2012/03/14.-water-texture.jpg"}]
-const dropdown = document.getElementById('dropdown_2')
+const dropdown = document.getElementById('dropdown_1')
 const elements = textures.map((texture, ind) => {
     
     const option = document.createElement("option")
@@ -49,7 +61,13 @@ element.onclick = function(event) {
     const xSquare = Math.floor(((event.clientX + container.scrollLeft) - this.offsetLeft)/30)
     const ySquare = Math.floor(((event.clientY + container.scrollTop) - this.offsetTop)/30)
     canvas.drawImage(elements[curId], (xSquare*30)+2, (ySquare*30)+2, 27, 27)
-    map[xSquare][length-ySquare] = curId === 0 ? -1 : curId
+    if (curId === 0) {
+            map[xSquare][length-ySquare] = -1
+    } else {
+        let final = curId << 8
+        final = final | property
+        map[xSquare][length-ySquare] = final
+    }
 }
 
 let dragging = false
@@ -58,12 +76,19 @@ element.onmousedown = function(e) {
     dragging = true
 }
 
-element.onmousemove = function(e) {
+element.onmousemove = function(event) {
     if (dragging) {
         const xSquare = Math.floor(((event.clientX + container.scrollLeft) - this.offsetLeft)/30)
         const ySquare = Math.floor(((event.clientY + container.scrollTop) - this.offsetTop)/30)
         canvas.drawImage(elements[curId], (xSquare*30)+2, (ySquare*30)+2, 27, 27)
-        map[xSquare][length-ySquare] = curId === 0 ? -1 : curId
+        
+        if (curId === 0) {
+            map[xSquare][length-ySquare] = -1
+        } else {
+            let final = curId << 8
+            final = final | property
+            map[xSquare][length-ySquare] = final
+        }
     }
 }
 
@@ -71,9 +96,17 @@ element.onmouseup = function(e) {
     dragging = false
 }
 
+element.onmouseleave = function(e) {
+    dragging = false
+}
+
 
 document.getElementById('dropdown_1').onchange = function(e) {
     curId = parseInt(e.target.value)
+}
+
+document.getElementById('dropdown_2').onchange = function(e) {
+    property = parseInt(e.target.selectedIndex)
 }
 
 document.getElementById("compile").onclick = function(e) {
