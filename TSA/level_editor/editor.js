@@ -15,11 +15,12 @@ container.scrollTop = 2517
 // this is where the level itself will be stored
 const map = []
 
+
 // the grid is split into 30x30 pixel blocks, so we need to account for that in the loop
-for (let x = 0; x < (element.offsetWidth/30); x++) {
+for (let x = 0; x < 1000; x++) {
     // start creating the 2-dimensional array that will hold the level data
     map.push([])
-    for (let y = 0; y < element.offsetHeight/30; y++) {
+    for (let y = 0; y < 1000; y++) {
         // -1 represents an empty block
         map[x][y] = -1
     }
@@ -62,7 +63,7 @@ element.onclick = function(event) {
     const ySquare = Math.floor(((event.clientY + container.scrollTop) - this.offsetTop)/30)
     canvas.drawImage(elements[curId], (xSquare*30)+2, (ySquare*30)+2, 27, 27)
     if (curId === 0) {
-            map[xSquare][length-ySquare] = -1
+            map[xSquare][length-ySquare] = (-1 << 8) | -1
     } else {
         let final = curId << 8
         final = final | property
@@ -83,7 +84,7 @@ element.onmousemove = function(event) {
         canvas.drawImage(elements[curId], (xSquare*30)+2, (ySquare*30)+2, 27, 27)
         
         if (curId === 0) {
-            map[xSquare][length-ySquare] = -1
+            map[xSquare][length-ySquare] = (-1 << 8) | -1
         } else {
             let final = curId << 8
             final = final | property
@@ -110,5 +111,11 @@ document.getElementById('dropdown_2').onchange = function(e) {
 }
 
 document.getElementById("compile").onclick = function(e) {
-    location.href = URL.createObjectURL(new Blob([JSON.stringify(map)],{type:'application/octet-binary'}))
+    const val = new Int32Array(1000000)
+    for (let x = 0; x < 1000; x++) {
+        for (let y = 0; y < 1000; y++) {
+            val[y+(x*1000)] = map[x][y]
+        }
+    }
+    location.href = URL.createObjectURL(new Blob([val.buffer],{type:'application/octet-binary'}))
 }
