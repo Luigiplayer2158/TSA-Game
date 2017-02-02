@@ -58,16 +58,19 @@ const elements = textures.map((texture, ind) => {
 
 let curId = 0;
 
-element.onclick = function(event) {
-    const xSquare = Math.floor(((event.clientX + container.scrollLeft) - this.offsetLeft)/30)
-    const ySquare = Math.floor(((event.clientY + container.scrollTop) - this.offsetTop)/30)
-    canvas.drawImage(elements[curId], (xSquare*30)+2, (ySquare*30)+2, 27, 27)
-    if (curId === 0) {
-            map[xSquare][length-ySquare] = (-1 << 8) | -1
-    } else {
-        let final = curId << 8
-        final = final | property
-        map[xSquare][length-ySquare] = final
+element.onclick = element.onmousemove = function(event) {
+    if (dragging) {
+        const xSquare = Math.floor(((event.clientX + container.scrollLeft) - this.offsetLeft)/30)
+        const ySquare = Math.floor(((event.clientY + container.scrollTop) - this.offsetTop)/30)
+        canvas.drawImage(elements[curId], (xSquare*30)+2, (ySquare*30)+2, 27, 27)
+        
+        if (curId === 0) {
+            map[xSquare][length-ySquare] = (-1 << 8) 
+        } else {
+            let final = curId << 8
+            final = final | property
+            map[xSquare][length-ySquare] = final
+        }
     }
 }
 
@@ -77,21 +80,6 @@ element.onmousedown = function(e) {
     dragging = true
 }
 
-element.onmousemove = function(event) {
-    if (dragging) {
-        const xSquare = Math.floor(((event.clientX + container.scrollLeft) - this.offsetLeft)/30)
-        const ySquare = Math.floor(((event.clientY + container.scrollTop) - this.offsetTop)/30)
-        canvas.drawImage(elements[curId], (xSquare*30)+2, (ySquare*30)+2, 27, 27)
-        
-        if (curId === 0) {
-            map[xSquare][length-ySquare] = (-1 << 8) | -1
-        } else {
-            let final = curId << 8
-            final = final | property
-            map[xSquare][length-ySquare] = final
-        }
-    }
-}
 
 element.onmouseup = function(e) {
     dragging = false
