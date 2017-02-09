@@ -130,6 +130,7 @@ public class MainGameLoop {
 		initTemporaryEntities();
 		initMenuEntities();
 		DisplayManager.update();
+		
 	}
 
 	/**
@@ -261,8 +262,8 @@ public class MainGameLoop {
 	}
 
 	private static void initTemporaryEntities() {
-		LevelImporter.loadLevel(temporaryGameEntities,
-				"/com/darkduckdevelopers/res/test.txt", loader, renderer);
+		//TODO make level importer more integrated
+				LevelImporter.loadLevel(temporaryGameEntities, "/com/darkduckdevelopers/res/testlevel.txt", loader, renderer);
 		/* Background entity */
 		Entity background = new Entity();
 		TransformComponent backgroundTransform = new TransformComponent(

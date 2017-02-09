@@ -27,9 +27,9 @@ public class ControllerMaster {
 		System.out.println();
 		System.out.println("Controllers:");
 		for (int i = 0; i < controllers.length; i++) {
-			if (controllers[i].getType().equals(Type.GAMEPAD) || controllers[i].getType().equals(Type.STICK) || controllers[i].getType().equals(Type.UNKNOWN)) {
+			if (Boolean.parseBoolean(PropertiesFile.getProperty("controller_" + controllers[i].getName().toLowerCase() + "_usable"))) {
 				identifiedControllers.add(controllers[i]);
-				System.out.println(controllers[i].getName());
+				System.out.println(controllers[i].getName() + ": " + controllers[i].getType());
 			}
 		}
 		System.out.println();
