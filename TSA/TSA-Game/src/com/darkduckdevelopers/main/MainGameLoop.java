@@ -203,19 +203,20 @@ public class MainGameLoop {
 		for (int i = 0; i < ControllerMaster.gamepads.length + 1; i++) {
 			Entity player = new Entity();
 			TransformComponent playerTransform = new TransformComponent(
-					new Vector2f(0f, 0f), 0f, new Vector2f(unitSize, unitSize));
+					new Vector2f(0f, 0f), 0f, new Vector2f(unitSize * 2, unitSize * 2));
 			playerTransforms[i] = playerTransform;
+			ShapeTexture playerTexture = new ShapeTexture(loader.loadTexture("player.png"));
+			playerTexture.setNumberOfRows(4);
 			RenderComponent playerRender = new RenderComponent(renderer,
-					playerTransform, new ShapeTexture(
-							loader.loadTexture("player.png")), 0, true);
+					playerTransform, playerTexture, 0, true);
 			CollideComponent playerCollider = new CollideComponent(
 					playerTransform, 1, -2f);
 			PlayerComponent playerControl;
 			if (i > 0) {
 				playerControl = new PlayerComponent(playerCollider,
-						ControllerMaster.gamepads[i - 1]);
+						ControllerMaster.gamepads[i - 1], playerRender);
 			} else {
-				playerControl = new PlayerComponent(playerCollider, null);
+				playerControl = new PlayerComponent(playerCollider, null, playerRender);
 			}
 			TargetableComponent playerTargetable = new TargetableComponent(
 					playerTransform, 1);
