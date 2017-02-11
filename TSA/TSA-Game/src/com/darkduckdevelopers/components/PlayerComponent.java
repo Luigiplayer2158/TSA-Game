@@ -22,7 +22,9 @@ public class PlayerComponent extends BaseComponent {
 	public float jumpSpeed;
 	public float deadzone;
 	public float animCurrentTime;
-	public float animSpeed = 0.2f;
+	public float animSpeed = 0.15f;
+	public int animation;
+	public int animationFrame;
 	public int leftKey;
 	public int rightKey;
 	public int jumpKey;
@@ -59,7 +61,7 @@ public class PlayerComponent extends BaseComponent {
 	// TODO Other components of a player
 	public void tick() {
 		float dx = 0f;
-		int animation = 0;
+		animation = 0;
 		if (controller == null) {
 			// If there is no controller, use keyboard input
 			if (Keyboard.isKeyDown(leftKey)) {
@@ -89,25 +91,31 @@ public class PlayerComponent extends BaseComponent {
 			}
 		}
 		// Figure out animation frames
-		if (animation != 0) {
-			if (render.index == 0) {
-				if (animation > 0) {
-					render.index = 2;
-				} else {
-					render.index = 3;
-				}
-			}
-			animCurrentTime += DisplayManager.getFrameTimeSeconds();
-			if (animCurrentTime >= animSpeed) {
-				animCurrentTime %= animSpeed;
-				if (render.index < 14) {
-					render.index += 4;
-				} else {
-					render.index -= 12;
-				}
-			}
-		} else {
+		if (animation == 0) {
+			animCurrentTime = 0;
+			animationFrame = 0;
 			render.index = 0;
+		} else {
+			animCurrentTime += DisplayManager.getFrameTimeSeconds();
+			if (animation == 1) {
+				if (animCurrentTime >= animSpeed) {
+					animCurrentTime %= animSpeed;
+					animationFrame++;
+					if (animationFrame > 3) {
+						animationFrame = 0;
+					}
+					render.index = animationFrame * 4 + 2;
+				}
+			} else if (animation == -1) {
+				if (animCurrentTime >= animSpeed) {
+					animCurrentTime %= animSpeed;
+					animationFrame++;
+					if (animationFrame > 3) {
+						animationFrame = 0;
+					}
+					render.index = animationFrame * 4 + 3;
+				}
+			}
 		}
 		transform.position.x += dx;
 	}

@@ -113,7 +113,7 @@ public class MainGameLoop {
 		ControllerMaster.tick();
 
 		DisplayManager.createDisplay(displayWidth, displayHeight, displayName,
-				true); // Create the display
+				false); // Create the display
 		shader = new Shader(shaderVertexName, shaderFragmentName); // Initialize
 																	// shader
 		loader = new Loader(); // Initialize loader
@@ -205,7 +205,7 @@ public class MainGameLoop {
 			TransformComponent playerTransform = new TransformComponent(
 					new Vector2f(0f, 0f), 0f, new Vector2f(unitSize * 2, unitSize * 2));
 			playerTransforms[i] = playerTransform;
-			ShapeTexture playerTexture = new ShapeTexture(loader.loadTexture("player.png"));
+			ShapeTexture playerTexture = new ShapeTexture(loader.loadTexture("aliss.png"));
 			playerTexture.setNumberOfRows(4);
 			RenderComponent playerRender = new RenderComponent(renderer,
 					playerTransform, playerTexture, 0, true);
@@ -258,7 +258,7 @@ public class MainGameLoop {
 				cameraTransform, playerTransforms);
 		gameCamera.addComponent(cameraAnchor);
 		// Try text
-		textMaster.drawText("cheese mcgeez", unitSize / 5f, 0f, -0.5f, true,
+		textMaster.drawText("about time i changed this", unitSize / 5f, 0f, -0.5f, true,
 				-1, 100, permanantGameEntities);
 	}
 
