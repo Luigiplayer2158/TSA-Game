@@ -92,18 +92,28 @@ public class PlayerComponent extends BaseComponent {
 		}
 		// Figure out animation frames
 		if (animation == 0) {
+			// If there is no animation we need to reset everything to be ready
 			animCurrentTime = 0;
 			animationFrame = 0;
 			render.index = 0;
 		} else {
+			// If there is an animation add to the animation timer
 			animCurrentTime += DisplayManager.getFrameTimeSeconds();
 			if (animation == 1) {
+				// For every time the animation time is complete
 				if (animCurrentTime >= animSpeed) {
 					animCurrentTime %= animSpeed;
+					// Increase animation frame
 					animationFrame++;
+					// Loop back at the end
 					if (animationFrame > 3) {
 						animationFrame = 0;
 					}
+					// If the player is airborne then choose an appropriate frame
+					if (!collider.isGrounded) {
+						animationFrame = 1;
+					}
+					// Calculate atlas index of frame (standard)
 					render.index = animationFrame * 4 + 2;
 				}
 			} else if (animation == -1) {
@@ -113,10 +123,15 @@ public class PlayerComponent extends BaseComponent {
 					if (animationFrame > 3) {
 						animationFrame = 0;
 					}
+					// If the player is airborne then choose an appropriate frame
+					if (!collider.isGrounded) {
+						animationFrame = 1;
+					}
 					render.index = animationFrame * 4 + 3;
 				}
 			}
 		}
+		// Move the player
 		transform.position.x += dx;
 	}
 
