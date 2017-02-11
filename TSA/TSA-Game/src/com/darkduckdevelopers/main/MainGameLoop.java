@@ -201,16 +201,19 @@ public class MainGameLoop {
 		/* Player entity */
 		TransformComponent[] playerTransforms = new TransformComponent[ControllerMaster.gamepads.length + 1];
 		for (int i = 0; i < ControllerMaster.gamepads.length + 1; i++) {
+			String playerType = "aliss";
 			Entity player = new Entity();
 			TransformComponent playerTransform = new TransformComponent(
 					new Vector2f(0f, 0f), 0f, new Vector2f(unitSize * 2, unitSize * 2));
 			playerTransforms[i] = playerTransform;
-			ShapeTexture playerTexture = new ShapeTexture(loader.loadTexture("aliss.png"));
+			ShapeTexture playerTexture = new ShapeTexture(loader.loadTexture(playerType + ".png"));
 			playerTexture.setNumberOfRows(4);
 			RenderComponent playerRender = new RenderComponent(renderer,
 					playerTransform, playerTexture, 0, true);
+			float playerHitboxSizeX = Float.parseFloat(PropertiesFile.getProperty("game_" + playerType + "_playerHitboxX"));
+			float playerHitboxSizeY = Float.parseFloat(PropertiesFile.getProperty("game_" + playerType + "_playerHitboxY"));
 			CollideComponent playerCollider = new CollideComponent(
-					playerTransform, 1, -2f);
+					playerTransform, 1, -2f, new Vector2f(playerHitboxSizeX * unitSize, playerHitboxSizeY * unitSize));
 			PlayerComponent playerControl;
 			if (i > 0) {
 				playerControl = new PlayerComponent(playerCollider,
@@ -290,7 +293,7 @@ public class MainGameLoop {
 				ground.addComponent(render);
 				if (j == 0) {
 					CollideComponent collider = new CollideComponent(transform,
-							0, 0f);
+							0, 0f, transform.size);
 					ground.addComponent(collider);
 				}
 				TargetableComponent targetable = new TargetableComponent(
@@ -308,7 +311,7 @@ public class MainGameLoop {
 				projectileTransform, new ShapeTexture(
 						loader.loadTexture("fireball.png")), 0, true);
 		CollideComponent projectileCollide = new CollideComponent(
-				projectileTransform, 2, gravity);
+				projectileTransform, 2, gravity, new Vector2f(unitSize / 2f, unitSize / 2f));
 		ProjectileComponent projectile = new ProjectileComponent(
 				projectileTransform, projectileCollide);
 		TargetableComponent projectileTargetable = new TargetableComponent(

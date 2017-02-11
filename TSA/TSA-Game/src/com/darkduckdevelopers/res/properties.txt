@@ -15,6 +15,9 @@ game_playerJump=1
 game_reticleSpeed=0.7
 game_reticleLock=0.4
 game_numTargeters=3
+// 15 / 32 wide and 22 / 32 tall times 2
+game_aliss_playerHitboxX=0.9375
+game_aliss_playerHitboxY=1.375
 game_0_aimDotTolerance=0.9
 game_0_aimRangeTolerance=5
 game_0_aimSelfPrevention=0.02

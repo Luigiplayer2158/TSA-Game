@@ -79,7 +79,7 @@ public class LevelImporter {
 		// Add physics component
 		if (physicsType != 4) {
 			CollideComponent collider = new CollideComponent(transform, physicsType,
-					Float.parseFloat(PropertiesFile.getProperty("game_gravity")));
+					Float.parseFloat(PropertiesFile.getProperty("game_gravity")), transform.size);
 			e.addComponent(collider);
 		}
 		// Add render component
