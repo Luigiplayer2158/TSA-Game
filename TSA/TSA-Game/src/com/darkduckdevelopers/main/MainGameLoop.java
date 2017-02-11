@@ -67,7 +67,7 @@ public class MainGameLoop {
 	 *            Runtime arguments passed by the cmd
 	 */
 	public static void main(String[] args) {
-		init(); // Initialize everything that will be used in the game
+		init(args); // Initialize everything that will be used in the game
 		while (true) { // Note: Stop is called from within loop, so there is no
 						// need to stop it
 			loop(); // Move everything, process player input, etc
@@ -77,7 +77,7 @@ public class MainGameLoop {
 	/**
 	 * Initialize the game and load the resources
 	 */
-	private static void init() {
+	private static void init(String[] args) {
 		gameState = 2;
 
 		/**
@@ -127,7 +127,7 @@ public class MainGameLoop {
 		loader.loadToVAO(Renderer.positions); // Load the quad VAO that will be
 												// used for everything
 		initPermanantEntities();
-		initTemporaryEntities();
+		initTemporaryEntities(args[0]);
 		initMenuEntities();
 		DisplayManager.update();
 		
@@ -265,9 +265,9 @@ public class MainGameLoop {
 				-1, 100, permanantGameEntities);
 	}
 
-	private static void initTemporaryEntities() {
+	private static void initTemporaryEntities(String levelFile) {
 		//TODO make level importer more integrated
-				LevelImporter.loadLevel(temporaryGameEntities, "/com/darkduckdevelopers/res/testlevel.txt", loader, renderer);
+		LevelImporter.loadLevel(temporaryGameEntities, levelFile, loader, renderer);
 		/* Background entity */
 		Entity background = new Entity();
 		TransformComponent backgroundTransform = new TransformComponent(
