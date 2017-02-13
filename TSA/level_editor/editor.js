@@ -43,7 +43,7 @@ for (let x = 0; x < element.offsetWidth+1; x += 30) {
     drawLine(0,x,x,element.offsetWidth)
 }
 
-const textures = [{name:"Eraser",src:"https://i.ytimg.com/vi/5hqd3knvcWk/maxresdefault.jpg"},{name:"Dirt",src:"http://texturemate.com/image/view/1441/_original",}, {name:"Water",src:"http://www.topdesignmag.com/wp-content/uploads/2012/03/14.-water-texture.jpg"}]
+const textures = [{name:"Eraser",src:"https://i.ytimg.com/vi/5hqd3knvcWk/maxresdefault.jpg"},{name:"Dirt",src:"Dirt.png"}, {name:"Water",src:"Water.png"},{name:"Top-Dirt",src:"Top-Dirt.png"}, {name:"Deep-Water",src:"Deep-Water.png"}]
 const dropdown = document.getElementById('dropdown_1')
 const elements = textures.map((texture, ind) => {
     
@@ -65,11 +65,12 @@ element.onclick = element.onmousemove = function(event) {
         canvas.drawImage(elements[curId], (xSquare*30)+2, (ySquare*30)+2, 27, 27)
         
         if (curId === 0) {
-            map[xSquare][length-ySquare] = (-1 << 8) 
+            map[xSquare][length-ySquare] = 0
         } else {
             let final = curId << 8
             final = final | property
             map[xSquare][length-ySquare] = final
+            console.log(final)
         }
     }
 }
@@ -99,11 +100,17 @@ document.getElementById('dropdown_2').onchange = function(e) {
 }
 
 document.getElementById("compile").onclick = function(e) {
-    const val = new Int32Array(1000000)
+    const val = new Uint32Array(1000001)
+    const test_prop = 0
+    const test_id = 127
+    val[0] = test_id
+    val[0] = val[0] << 8
+    val[0] = val[0] | test_prop
     for (let x = 0; x < 1000; x++) {
         for (let y = 0; y < 1000; y++) {
-            val[y+(x*1000)] = map[x][y]
+            val[y+(x*1000)+1] = map[x][y]
         }
     }
     location.href = URL.createObjectURL(new Blob([val.buffer],{type:'application/octet-binary'}))
 }
+
