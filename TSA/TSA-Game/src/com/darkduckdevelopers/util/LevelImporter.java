@@ -1,13 +1,12 @@
 package com.darkduckdevelopers.util;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 
 import org.lwjgl.util.vector.Vector2f;
 
-import com.darkduckdevelopers.components.CollideComponent;
 import com.darkduckdevelopers.components.RenderComponent;
 import com.darkduckdevelopers.components.TransformComponent;
 import com.darkduckdevelopers.objects.Entity;
@@ -24,85 +23,46 @@ public class LevelImporter {
 
 	private static HashMap<Integer, ShapeTexture> textures = new HashMap<Integer, ShapeTexture>();
 
-	public static void loadLevel(List<Entity> entities, String levelFile, Loader loader, Renderer renderer) {
-		// Create a new reader
-		BufferedReader reader = null;
+	public static void loadLevel(List<Entity> entities, String levelFile,
+			Loader loader, Renderer renderer) {
+		// Input to byte array
+		InputStream is = Class.class.getResourceAsStream(levelFile);
+		byte[] bytes = new byte[4000004];
 		try {
-			InputStreamReader isr = new InputStreamReader(Class.class.getResourceAsStream(levelFile));
-			reader = new BufferedReader(isr);
-		} catch (Exception e) {
-			System.err.println("Level not found! " + levelFile);
-			return;
-		}
-
-		// Read through file
-		String line = "";
-		try {
-			line = reader.readLine();
-		} catch (Exception e) {
+			is.read(bytes);
+		} catch (IOException e) {
+			System.err.println("There was a problem reading " + levelFile
+					+ ". It's possible the file doesn't exist.");
 			e.printStackTrace();
 		}
-		int positionIndex = 0;
-		while (line != null) {
-			byte[] bytes = line.getBytes();
-			for (int i = 0; i < bytes.length; i += 2) {
-				positionIndex += 1;
-				if (bytes[i] != -1 && bytes[i + 1] != -1) {
-					int gridX = positionIndex % 1000;
-					int gridY = positionIndex / 1000;
-					int property = (bytes[i] << 0) & 0x000000ff;
-					int texId = (bytes[i + 1] << 0) & 0x000000ff;
-					System.out.println(texId + ", " + property + ", [" + gridX
-							+ ", " + gridY + "]");
-					
-				}
-			}
-			try {
-				line = reader.readLine();
-			} catch (Exception e) {
-				e.printStackTrace();
-				break;
-			}
-		}
-	}
 
-	/**
-	 * KEY FOR ENTITY IDENTIFICATION
-	 * 
-	 * ID % 5 = PHYSICS TYPE ID / 5 = TEXTURE ID
-	 */
-	private static Entity addIdComponents(int id, Entity e, TransformComponent transform, Loader loader,
-			Renderer renderer) {
-		// Parse ID into texture and physics IDs
-		int physicsType = id % 5;
-		int textureId = id / 5;
-		// Add physics component
-		if (physicsType != 4) {
-			CollideComponent collider = new CollideComponent(transform, physicsType,
-					Float.parseFloat(PropertiesFile.getProperty("game_gravity")), transform.size);
-			e.addComponent(collider);
-		}
-		// Add render component
-		RenderComponent render = new RenderComponent(renderer, transform, performTextureLookup(textureId, loader), 0,
-				true);
-		e.addComponent(render);
-		// Return to level parser
-		return e;
-	}
+		// Create entity for 4 bytes
+		for (int i = 0; i < bytes.length / 4; i++) {
+			int property = (bytes[i * 4]);
+			int texture = (bytes[i * 4 + 1]);
+			texture = texture | (bytes[i * 4 + 2] << 8);
+			texture = texture | (bytes[i * 4 + 3] << 16);
 
-	private static ShapeTexture performTextureLookup(int texId, Loader loader) {
-		// Check the hashmap for an existing texture
-		if (textures.get(texId) != null) {
-			return textures.get(texId);
-		} else {
-			// Lookup texture loation from properties file and create shape
-			// texture object
-			String propertiesFileKey = ("texture_" + texId);
-			String textureLocation = PropertiesFile.getProperty(propertiesFileKey);
-			int graphicalTextureId = loader.loadTexture(textureLocation);
-			ShapeTexture texture = new ShapeTexture(graphicalTextureId);
-			return texture;
+			if (texture != -1 && property != -1) {
+				int gridX = i % 1000;
+				int gridY = i / 1000;
+				Entity e = new Entity();
+				TransformComponent transform = new TransformComponent(
+						new Vector2f(gridX / 5f, gridY / 5f), 0f, new Vector2f(
+								0.2f, 0.2f));
+				RenderComponent render = new RenderComponent(
+						renderer,
+						transform,
+						new ShapeTexture(
+								loader.loadTexture("aliss.png")),
+						0, true);
+				e.addComponent(render);
+				entities.add(e);
+				System.out.println(gridX + ": " + gridY);
+			}
+
 		}
+
 	}
 
 }

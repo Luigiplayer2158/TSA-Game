@@ -127,7 +127,7 @@ public class MainGameLoop {
 		if (args.length > 0) {
 			initTemporaryEntities(args[0]);
 		} else {
-			initTemporaryEntities("testlevel.txt");
+			initTemporaryEntities("/com/darkduckdevelopers/res/testlevel.txt");
 		}
 		initMenuEntities();
 		DisplayManager.update();
