@@ -25,29 +25,26 @@ public class LevelImporter {
 
 	private static HashMap<Integer, ShapeTexture> textures = new HashMap<Integer, ShapeTexture>();
 
-	public static void loadLevel(List<Entity> entities, String levelFile, Loader loader, Renderer renderer,
-			float unitSize, float gravity) {
+	public static void loadLevel(List<Entity> entities, String levelFile,
+			Loader loader, Renderer renderer, float unitSize, float gravity) {
 		// Input to byte array
 		levelFile = levelFile.replace('\\', '/');
 		System.out.println(levelFile);
 		InputStream is = null;
-		if (!levelFile.startsWith("/")) {
-			try {
-				is = new FileInputStream(levelFile);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} else {
-			is = Class.class.getResourceAsStream(levelFile);
+		try {
+			is = new FileInputStream(levelFile);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		byte[] bytes = new byte[4000004];
 		try {
 			is.read(bytes);
 		} catch (IOException e) {
-			System.err.println("There was a problem reading " + levelFile + ". It's possible the file doesn't exist.");
+			System.err.println("There was a problem reading " + levelFile
+					+ ". It's possible the file doesn't exist.");
 			e.printStackTrace();
 		}
-		
+
 		// Create entity for 4 bytes
 		for (int i = 0; i < bytes.length / 4; i++) {
 			int property = (bytes[i * 4]);
@@ -61,11 +58,13 @@ public class LevelImporter {
 				int gridY = (i - 900) % 1000;
 				Entity e = new Entity();
 				TransformComponent transform = new TransformComponent(
-						new Vector2f(gridX * unitSize * 2, gridY * unitSize * 2), 0f, new Vector2f(unitSize, unitSize));
-				RenderComponent render = new RenderComponent(renderer, transform, textures.get(texture), 0, true);
+						new Vector2f(gridX * unitSize * 2, gridY * unitSize * 2),
+						0f, new Vector2f(unitSize, unitSize));
+				RenderComponent render = new RenderComponent(renderer,
+						transform, textures.get(texture), 0, true);
 				if (property < 4) {
-					CollideComponent collider = new CollideComponent(transform, property, gravity,
-							new Vector2f(unitSize, unitSize));
+					CollideComponent collider = new CollideComponent(transform,
+							property, gravity, new Vector2f(unitSize, unitSize));
 					if (property == 0) {
 						collider.gravity = 0f;
 					}
@@ -77,7 +76,7 @@ public class LevelImporter {
 
 		}
 	}
-	
+
 	// Lookup a texture, if it isn't there, put one there
 	private static void textureLookup(int id, Loader loader) {
 		ShapeTexture texture = textures.get(id);
