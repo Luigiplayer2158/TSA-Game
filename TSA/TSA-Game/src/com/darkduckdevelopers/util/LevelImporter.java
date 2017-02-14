@@ -1,5 +1,6 @@
 package com.darkduckdevelopers.util;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -27,7 +28,18 @@ public class LevelImporter {
 	public static void loadLevel(List<Entity> entities, String levelFile, Loader loader, Renderer renderer,
 			float unitSize, float gravity) {
 		// Input to byte array
-		InputStream is = Class.class.getResourceAsStream(levelFile);
+		levelFile = levelFile.replace('\\', '/');
+		System.out.println(levelFile);
+		InputStream is = null;
+		if (!levelFile.startsWith("/")) {
+			try {
+				is = new FileInputStream(levelFile);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			is = Class.class.getResourceAsStream(levelFile);
+		}
 		byte[] bytes = new byte[4000004];
 		try {
 			is.read(bytes);
@@ -71,7 +83,6 @@ public class LevelImporter {
 		ShapeTexture texture = textures.get(id);
 		if (texture == null) {
 			String textureFile = PropertiesFile.getProperty("texture_" + id);
-			System.out.println(textureFile + id);
 			texture = new ShapeTexture(loader.loadTexture(textureFile));
 			textures.put(id, texture);
 		}

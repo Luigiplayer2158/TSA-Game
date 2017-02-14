@@ -3,6 +3,9 @@ package com.darkduckdevelopers.main;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector2f;
@@ -15,9 +18,7 @@ import com.darkduckdevelopers.components.FollowerComponent;
 import com.darkduckdevelopers.components.MenuOptionScrollerComponent;
 import com.darkduckdevelopers.components.MenuTargetableComponent;
 import com.darkduckdevelopers.components.PlayerComponent;
-import com.darkduckdevelopers.components.ProjectileComponent;
 import com.darkduckdevelopers.components.RenderComponent;
-import com.darkduckdevelopers.components.SpinComponent;
 import com.darkduckdevelopers.components.TargetableComponent;
 import com.darkduckdevelopers.components.TransformComponent;
 import com.darkduckdevelopers.objects.Entity;
@@ -56,6 +57,7 @@ public class MainGameLoop {
 	private static float unitSize;
 	private static float gravity;
 	private static float splashTime;
+	private static String currentLevel;
 
 	public static int gameState;
 	public static boolean debug;
@@ -67,7 +69,7 @@ public class MainGameLoop {
 	 *            Runtime arguments passed by the cmd
 	 */
 	public static void main(String[] args) {
-		init(args); // Initialize everything that will be used in the game
+		init(); // Initialize everything that will be used in the game
 		while (true) { // Note: Stop is called from within loop, so there is no
 						// need to stop it
 			loop(); // Move everything, process player input, etc
@@ -77,7 +79,10 @@ public class MainGameLoop {
 	/**
 	 * Initialize the game and load the resources
 	 */
-	private static void init(String[] args) {
+	private static void init() {
+		// Parent frame of dialog
+		JFrame dialogFrame = new JFrame();
+		
 		gameState = 2;
 
 		/**
@@ -104,11 +109,12 @@ public class MainGameLoop {
 		/**
 		 * Create the gamepads and clear out values because they like to spike
 		 */
-		// TODO put this back
 		ControllerMaster.getControllers();
 		ControllerMaster.tick();
 		ControllerMaster.tick();
 
+		currentLevel = JOptionPane.showInputDialog(dialogFrame, "Enter the path to the level file");
+		
 		DisplayManager.createDisplay(displayWidth, displayHeight, displayName, false); // Create
 																						// the
 																						// display
@@ -125,14 +131,11 @@ public class MainGameLoop {
 		loader.loadToVAO(Renderer.positions); // Load the quad VAO that will be
 												// used for everything
 		initPermanantEntities();
-		if (args.length > 0) {
-			initTemporaryEntities(args[0]);
-		} else {
-			initTemporaryEntities("/com/darkduckdevelopers/res/testlevel.txt");
-		}
+		initTemporaryEntities(currentLevel);
 		initMenuEntities();
-		DisplayManager.update();
 
+		dialogFrame.dispose();
+		DisplayManager.update();
 	}
 
 	/**
@@ -230,19 +233,24 @@ public class MainGameLoop {
 			player.addComponent(playerTargetable);
 			permanantGameEntities.add(player);
 			// Reticle for player
-			Entity reticle = new Entity();
-			TransformComponent reticleTransform = new TransformComponent(new Vector2f(0f, 0f), 0f,
-					new Vector2f(unitSize, unitSize));
-			RenderComponent reticleRender = new RenderComponent(renderer, reticleTransform,
-					new ShapeTexture(loader.loadTexture("reticle.png")), 0, true);
-			FollowerComponent reticleFollower = new FollowerComponent(reticleTransform, playerTransform);
-			AutoTargetComponent reticleControl = new AutoTargetComponent(reticleFollower, playerControl.controller, 1);
-			SpinComponent reticleSpin = new SpinComponent(reticleTransform, 360f);
-			reticle.addComponent(reticleRender);
-			reticle.addComponent(reticleFollower);
-			reticle.addComponent(reticleControl);
-			reticle.addComponent(reticleSpin);
-			permanantGameEntities.add(reticle);
+			/**
+			 * Entity reticle = new Entity(); TransformComponent
+			 * reticleTransform = new TransformComponent(new Vector2f(0f, 0f),
+			 * 0f, new Vector2f(unitSize, unitSize)); RenderComponent
+			 * reticleRender = new RenderComponent(renderer, reticleTransform,
+			 * new ShapeTexture(loader.loadTexture("reticle.png")), 0, true);
+			 * FollowerComponent reticleFollower = new
+			 * FollowerComponent(reticleTransform, playerTransform);
+			 * AutoTargetComponent reticleControl = new
+			 * AutoTargetComponent(reticleFollower, playerControl.controller,
+			 * 1); SpinComponent reticleSpin = new
+			 * SpinComponent(reticleTransform, 360f);
+			 * reticle.addComponent(reticleRender);
+			 * reticle.addComponent(reticleFollower);
+			 * reticle.addComponent(reticleControl);
+			 * reticle.addComponent(reticleSpin);
+			 * permanantGameEntities.add(reticle);
+			 */
 		}
 
 		/* Camera entity */
@@ -254,21 +262,9 @@ public class MainGameLoop {
 		permanantGameEntities.add(gameCamera);
 		AverageAnchorComponent cameraAnchor = new AverageAnchorComponent(cameraTransform, playerTransforms);
 		gameCamera.addComponent(cameraAnchor);
-		// Try text
-		textMaster.drawText("about time i changed this", unitSize / 5f, 0f, -0.5f, true, -1, 100,
-				permanantGameEntities);
 	}
 
 	private static void initTemporaryEntities(String levelFile) {
-		/* Background entity */
-		Entity background = new Entity();
-		TransformComponent backgroundTransform = new TransformComponent(new Vector2f(0f, 0f), 0f, new Vector2f(1f, 1f));
-		RenderComponent backgroundRender = new RenderComponent(renderer, backgroundTransform,
-				new ShapeTexture(loader.loadTexture("background.png")), 0, false);
-		background.addComponent(backgroundRender);
-		temporaryGameEntities.add(background);
-		menuEntities.add(background);
-		// TODO make level importer more integrated
 		LevelImporter.loadLevel(temporaryGameEntities, levelFile, loader, renderer, unitSize, gravity);
 	}
 

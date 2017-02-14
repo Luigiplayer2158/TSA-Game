@@ -6,6 +6,7 @@ import java.util.List;
 import com.darkduckdevelopers.objects.Gamepad;
 
 import net.java.games.input.Controller;
+import net.java.games.input.ControllerEnvironment;
 
 /**
  * A class to manage gamepads
@@ -21,7 +22,6 @@ public class ControllerMaster {
 	 */
 	public static void getControllers() {
 		List<Controller> identifiedControllers = new ArrayList<Controller>();
-		/**
 		Controller[] controllers = ControllerEnvironment.getDefaultEnvironment().getControllers();
 		System.out.println();
 		System.out.println("Controllers:");
@@ -32,7 +32,6 @@ public class ControllerMaster {
 			}
 		}
 		System.out.println();
-		*/
 		gamepads = new Gamepad[identifiedControllers.size()];
 		for (int i = 0; i < gamepads.length; i++) {
 			gamepads[i] = new Gamepad(identifiedControllers.get(i));
