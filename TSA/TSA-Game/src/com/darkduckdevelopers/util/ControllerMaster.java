@@ -6,7 +6,6 @@ import java.util.List;
 import com.darkduckdevelopers.objects.Gamepad;
 
 import net.java.games.input.Controller;
-import net.java.games.input.ControllerEnvironment;
 
 /**
  * A class to manage gamepads

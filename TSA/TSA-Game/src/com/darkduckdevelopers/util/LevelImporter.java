@@ -8,7 +8,6 @@ import java.util.List;
 import org.lwjgl.util.vector.Vector2f;
 
 import com.darkduckdevelopers.components.CollideComponent;
-import com.darkduckdevelopers.components.DebugComponent;
 import com.darkduckdevelopers.components.RenderComponent;
 import com.darkduckdevelopers.components.TransformComponent;
 import com.darkduckdevelopers.objects.Entity;
@@ -37,8 +36,6 @@ public class LevelImporter {
 			e.printStackTrace();
 		}
 		
-		ShapeTexture sTex = new ShapeTexture(loader.loadTexture("ground.png"));
-
 		// Create entity for 4 bytes
 		for (int i = 0; i < bytes.length / 4; i++) {
 			int property = (bytes[i * 4]);
@@ -47,12 +44,13 @@ public class LevelImporter {
 			texture = texture | (bytes[i * 4 + 3] << 16);
 
 			if (texture != -1 && property != -1 && i != 0) {
+				textureLookup(texture, loader);
 				int gridX = (i - 900) / 1000;
 				int gridY = (i - 900) % 1000;
 				Entity e = new Entity();
 				TransformComponent transform = new TransformComponent(
 						new Vector2f(gridX * unitSize * 2, gridY * unitSize * 2), 0f, new Vector2f(unitSize, unitSize));
-				RenderComponent render = new RenderComponent(renderer, transform, sTex, 0, true);
+				RenderComponent render = new RenderComponent(renderer, transform, textures.get(texture), 0, true);
 				if (property < 4) {
 					CollideComponent collider = new CollideComponent(transform, property, gravity,
 							new Vector2f(unitSize, unitSize));
@@ -65,6 +63,17 @@ public class LevelImporter {
 				entities.add(e);
 			}
 
+		}
+	}
+	
+	// Lookup a texture, if it isn't there, put one there
+	private static void textureLookup(int id, Loader loader) {
+		ShapeTexture texture = textures.get(id);
+		if (texture == null) {
+			String textureFile = PropertiesFile.getProperty("texture_" + id);
+			System.out.println(textureFile + id);
+			texture = new ShapeTexture(loader.loadTexture(textureFile));
+			textures.put(id, texture);
 		}
 	}
 

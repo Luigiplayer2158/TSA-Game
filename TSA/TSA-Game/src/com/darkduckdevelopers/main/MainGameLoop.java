@@ -270,21 +270,6 @@ public class MainGameLoop {
 		menuEntities.add(background);
 		// TODO make level importer more integrated
 		LevelImporter.loadLevel(temporaryGameEntities, levelFile, loader, renderer, unitSize, gravity);
-		/* Projectile */
-		Entity testProjectile = new Entity();
-		TransformComponent projectileTransform = new TransformComponent(new Vector2f(0f, 0f), 0f,
-				new Vector2f(unitSize / 2f, unitSize / 2f));
-		RenderComponent projectileRender = new RenderComponent(renderer, projectileTransform,
-				new ShapeTexture(loader.loadTexture("fireball.png")), 0, true);
-		CollideComponent projectileCollide = new CollideComponent(projectileTransform, 2, gravity,
-				new Vector2f(unitSize / 2f, unitSize / 2f));
-		ProjectileComponent projectile = new ProjectileComponent(projectileTransform, projectileCollide);
-		TargetableComponent projectileTargetable = new TargetableComponent(projectileTransform, 1);
-		testProjectile.addComponent(projectileRender);
-		testProjectile.addComponent(projectileCollide);
-		testProjectile.addComponent(projectile);
-		testProjectile.addComponent(projectileTargetable);
-		temporaryGameEntities.add(testProjectile);
 	}
 
 	private static void initMenuEntities() {

@@ -28,10 +28,11 @@ game_2_aimDotTolerance=0.9
 game_2_aimRangeTolerance=1
 game_2_aimSelfPrevention=0.002
 
-texture_0=player.png
-texture_1=player.png
-texture_2=player.png
-texture_3=player.png
+texture_0=dog.png
+texture_1=dirt.png
+texture_2=water.png
+texture_3=topDirt.png
+texture_4=deepWater.png
 
 // Search for these, they aren't the default Java ones in every case
 key_escape=1
