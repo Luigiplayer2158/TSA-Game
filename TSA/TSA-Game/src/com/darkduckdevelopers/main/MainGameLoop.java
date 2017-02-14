@@ -104,6 +104,7 @@ public class MainGameLoop {
 		/**
 		 * Create the gamepads and clear out values because they like to spike
 		 */
+		// TODO put this back
 		ControllerMaster.getControllers();
 		ControllerMaster.tick();
 		ControllerMaster.tick();
@@ -204,7 +205,7 @@ public class MainGameLoop {
 		for (int i = 0; i < ControllerMaster.gamepads.length + 1; i++) {
 			String playerType = "aliss";
 			Entity player = new Entity();
-			TransformComponent playerTransform = new TransformComponent(new Vector2f(0f, 0f), 0f,
+			TransformComponent playerTransform = new TransformComponent(new Vector2f(0.4f, 0.6f), 0f,
 					new Vector2f(unitSize * 2, unitSize * 2));
 			playerTransforms[i] = playerTransform;
 			ShapeTexture playerTexture = new ShapeTexture(loader.loadTexture(playerType + ".png"));
@@ -259,8 +260,6 @@ public class MainGameLoop {
 	}
 
 	private static void initTemporaryEntities(String levelFile) {
-		// TODO make level importer more integrated
-		LevelImporter.loadLevel(temporaryGameEntities, levelFile, loader, renderer);
 		/* Background entity */
 		Entity background = new Entity();
 		TransformComponent backgroundTransform = new TransformComponent(new Vector2f(0f, 0f), 0f, new Vector2f(1f, 1f));
@@ -269,25 +268,8 @@ public class MainGameLoop {
 		background.addComponent(backgroundRender);
 		temporaryGameEntities.add(background);
 		menuEntities.add(background);
-		/* Terrain entities */
-		ShapeTexture groundTexture = new ShapeTexture(loader.loadTexture("ground.png"));
-		for (int i = 0; i < 10; i++) {
-			for (int j = 0; j < 5; j++) {
-				Entity ground = new Entity();
-				TransformComponent transform = new TransformComponent(
-						new Vector2f((-unitSize * 9) + (i * unitSize * 2), (-unitSize * 9) - (j * unitSize * 2)), 0f,
-						new Vector2f(unitSize, unitSize));
-				RenderComponent render = new RenderComponent(renderer, transform, groundTexture, 0, true);
-				ground.addComponent(render);
-				if (j == 0) {
-					CollideComponent collider = new CollideComponent(transform, 0, 0f, transform.size);
-					ground.addComponent(collider);
-				}
-				TargetableComponent targetable = new TargetableComponent(transform, 1);
-				ground.addComponent(targetable);
-				temporaryGameEntities.add(ground);
-			}
-		}
+		// TODO make level importer more integrated
+		LevelImporter.loadLevel(temporaryGameEntities, levelFile, loader, renderer, unitSize, gravity);
 		/* Projectile */
 		Entity testProjectile = new Entity();
 		TransformComponent projectileTransform = new TransformComponent(new Vector2f(0f, 0f), 0f,

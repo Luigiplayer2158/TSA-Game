@@ -29,8 +29,7 @@ public class CollideComponent extends BaseComponent {
 	// 2 - moves player
 	// 3 - player moves
 
-	public CollideComponent(TransformComponent transform, int colliderType,
-			float gravity, Vector2f size) {
+	public CollideComponent(TransformComponent transform, int colliderType, float gravity, Vector2f size) {
 		this.transform = transform;
 		this.colliderType = colliderType;
 		if (entities == null) {
@@ -45,39 +44,31 @@ public class CollideComponent extends BaseComponent {
 	public void tick() {
 		isGrounded = false;
 		verticalSpeed += gravity * DisplayManager.getFrameTimeSeconds();
-		transform.position.y += verticalSpeed
-				* DisplayManager.getFrameTimeSeconds();
+		transform.position.y += verticalSpeed * DisplayManager.getFrameTimeSeconds();
 		for (CollideComponent collider : entities) {
-			if (colliderType != collider.colliderType
-					&& collider.colliderType != 0) {
-				float xOff = collider.transform.position.x
-						- transform.position.x;
+			if (colliderType != collider.colliderType && collider.colliderType != 0) {
 				float combinedSizeX = collider.size.x + size.x;
-				if (Math.abs(xOff) <= combinedSizeX) {
+				float xOff = collider.transform.position.x - transform.position.x;
+				if (Math.abs(xOff) <= combinedSizeX - 0.0001f) {
 					float combinedSizeY = collider.size.y + size.y;
-					float yOff = collider.transform.position.y
-							- transform.position.y;
-					if (Math.abs(yOff) <= combinedSizeY) {
+					float yOff = collider.transform.position.y - transform.position.y;
+					if (Math.abs(yOff) <= combinedSizeY - 0.0001f) {
 						collider.hit(colliderType);
 						if (colliderType != 1 || collider.colliderType == 3) {
-							if (Math.abs(yOff) > Math.abs(xOff) - 0.01f) {
-								if (yOff > 0) {
-									collider.transform.position.y = transform.position.y
-											+ combinedSizeY;
+							if (Math.abs(yOff) < Math.abs(xOff) + 0.002f) {
+								if (xOff > 0) {
+									collider.transform.position.x = transform.position.x + combinedSizeX;
+								} else {
+									collider.transform.position.x = transform.position.x - combinedSizeX;
+								}
+							} else {
+								if (yOff >= 0) {
+									collider.transform.position.y = transform.position.y + combinedSizeY;
 									if (collider.verticalSpeed < 0f) {
 										collider.stopGravity();
 									}
 								} else {
-									collider.transform.position.y = transform.position.y
-											- combinedSizeY;
-								}
-							} else {
-								if (xOff > 0) {
-									collider.transform.position.x = transform.position.x
-											+ combinedSizeX;
-								} else {
-									collider.transform.position.x = transform.position.x
-											- combinedSizeX;
+									collider.transform.position.y = transform.position.y - combinedSizeY;
 								}
 							}
 						}

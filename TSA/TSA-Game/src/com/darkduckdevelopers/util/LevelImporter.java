@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.lwjgl.util.vector.Vector2f;
 
+import com.darkduckdevelopers.components.CollideComponent;
+import com.darkduckdevelopers.components.DebugComponent;
 import com.darkduckdevelopers.components.RenderComponent;
 import com.darkduckdevelopers.components.TransformComponent;
 import com.darkduckdevelopers.objects.Entity;
@@ -23,18 +25,19 @@ public class LevelImporter {
 
 	private static HashMap<Integer, ShapeTexture> textures = new HashMap<Integer, ShapeTexture>();
 
-	public static void loadLevel(List<Entity> entities, String levelFile,
-			Loader loader, Renderer renderer) {
+	public static void loadLevel(List<Entity> entities, String levelFile, Loader loader, Renderer renderer,
+			float unitSize, float gravity) {
 		// Input to byte array
 		InputStream is = Class.class.getResourceAsStream(levelFile);
 		byte[] bytes = new byte[4000004];
 		try {
 			is.read(bytes);
 		} catch (IOException e) {
-			System.err.println("There was a problem reading " + levelFile
-					+ ". It's possible the file doesn't exist.");
+			System.err.println("There was a problem reading " + levelFile + ". It's possible the file doesn't exist.");
 			e.printStackTrace();
 		}
+		
+		ShapeTexture sTex = new ShapeTexture(loader.loadTexture("ground.png"));
 
 		// Create entity for 4 bytes
 		for (int i = 0; i < bytes.length / 4; i++) {
@@ -43,26 +46,26 @@ public class LevelImporter {
 			texture = texture | (bytes[i * 4 + 2] << 8);
 			texture = texture | (bytes[i * 4 + 3] << 16);
 
-			if (texture != -1 && property != -1) {
-				int gridX = i % 1000;
-				int gridY = i / 1000;
+			if (texture != -1 && property != -1 && i != 0) {
+				int gridX = (i - 900) / 1000;
+				int gridY = (i - 900) % 1000;
 				Entity e = new Entity();
 				TransformComponent transform = new TransformComponent(
-						new Vector2f(gridX / 5f, gridY / 5f), 0f, new Vector2f(
-								0.2f, 0.2f));
-				RenderComponent render = new RenderComponent(
-						renderer,
-						transform,
-						new ShapeTexture(
-								loader.loadTexture("aliss.png")),
-						0, true);
+						new Vector2f(gridX * unitSize * 2, gridY * unitSize * 2), 0f, new Vector2f(unitSize, unitSize));
+				RenderComponent render = new RenderComponent(renderer, transform, sTex, 0, true);
+				if (property < 4) {
+					CollideComponent collider = new CollideComponent(transform, property, gravity,
+							new Vector2f(unitSize, unitSize));
+					if (property == 0) {
+						collider.gravity = 0f;
+					}
+					e.addComponent(collider);
+				}
 				e.addComponent(render);
 				entities.add(e);
-				System.out.println(gridX + ": " + gridY);
 			}
 
 		}
-
 	}
 
 }
