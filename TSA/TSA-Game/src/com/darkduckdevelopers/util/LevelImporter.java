@@ -30,11 +30,16 @@ public class LevelImporter {
 		// Input to byte array
 		levelFile = levelFile.replace('\\', '/');
 		System.out.println(levelFile);
+
 		InputStream is = null;
-		try {
-			is = new FileInputStream(levelFile);
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (levelFile.startsWith("+")) {
+			is = Class.class.getResourceAsStream(levelFile.substring(1));
+		} else {
+			try {
+				is = new FileInputStream(levelFile);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		byte[] bytes = new byte[4000004];
 		try {
@@ -52,7 +57,7 @@ public class LevelImporter {
 			texture = texture | (bytes[i * 4 + 2] << 8);
 			texture = texture | (bytes[i * 4 + 3] << 16);
 
-			if (texture != -1 && property != -1 && i != 0) {
+			if (texture > 0 && i > 0) {
 				textureLookup(texture, loader);
 				int gridX = (i - 900) / 1000;
 				int gridY = (i - 900) % 1000;
