@@ -27,7 +27,7 @@ public class SoundTesting {
 				} else {
 					sources[i].play(shoot);
 					try {
-						Thread.sleep(112);
+						Thread.sleep(140);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}

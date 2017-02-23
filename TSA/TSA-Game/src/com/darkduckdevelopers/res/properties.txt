@@ -10,11 +10,14 @@ game_splashTime=2
 game_debug=true
 game_gravity=-2
 game_unitSize=0.1
-game_playerSpeed=0.7
+game_playerSpeed=1
 game_playerJump=1
 game_reticleSpeed=0.7
 game_reticleLock=0.4
 game_numTargeters=3
+// 15 / 32 wide and 22 / 32 tall times 2
+game_aliss_playerHitboxX=0.9375
+game_aliss_playerHitboxY=1.375
 game_0_aimDotTolerance=0.9
 game_0_aimRangeTolerance=5
 game_0_aimSelfPrevention=0.02
@@ -25,10 +28,11 @@ game_2_aimDotTolerance=0.9
 game_2_aimRangeTolerance=1
 game_2_aimSelfPrevention=0.002
 
-texture_0=player.png
-texture_1=player.png
-texture_2=player.png
-texture_3=player.png
+texture_0=dog.png
+texture_1=dirt.png
+texture_2=water.png
+texture_3=topDirt.png
+texture_4=deepWater.png
 
 // Search for these, they aren't the default Java ones in every case
 key_escape=1
@@ -44,7 +48,11 @@ key_back=44
 
 // All controller codes are in controller guide.txt
 // PS4
+controller_wireless controller_usable=true
 controller_wireless controller_deadzone=0.1
+controller_wireless controller_buttonMax=1
+controller_wireless controller_vertInvert=false
+controller_wireless controller_stickMax=1
 controller_wireless controller_leftHor=X Axis
 controller_wireless controller_jump=Button 1
 controller_wireless controller_aimVert=Z Rotation
@@ -53,10 +61,27 @@ controller_wireless controller_select=Button 1
 controller_wireless controller_back=Button 2
 
 // XBOX 360
+controller_controller (xbox 360 for windows)_usable=true
 controller_controller (xbox 360 for windows)_deadzone=0.1
+controller_controller (xbox 360 for windows)_buttonMax=1
+controller_controller (xbox 360 for windows)_vertInvert=false
+controller_controller (xbox 360 for windows)_stickMax=1
 controller_controller (xbox 360 for windows)_leftHor=X Axis
 controller_controller (xbox 360 for windows)_jump=Button 0
 controller_controller (xbox 360 for windows)_aimVert=Y Rotation
 controller_controller (xbox 360 for windows)_aimHor=X Rotation
 controller_controller (xbox 360 for windows)_select=Button 0
-controller_controller (xbox 360 for windows)_back=Button 2
+controller_controller (xbox 360 for windows)_back=Button 1
+
+// Steelseries
+controller_nimbus_usable=true
+controller_nimbus_deadzone=0.1
+controller_nimbus_buttonMax=255
+controller_nimbus_vertInvert=true
+controller_nimbus_stickMax=1
+controller_nimbus_leftHor=x
+controller_nimbus_jump=0
+controller_nimbus_aimVert=rz
+controller_nimbus_aimHor=z
+controller_nimbus_select=0
+controller_nimbus_back=1

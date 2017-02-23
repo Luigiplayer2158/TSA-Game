@@ -6,7 +6,6 @@ import java.util.List;
 import com.darkduckdevelopers.objects.Gamepad;
 
 import net.java.games.input.Controller;
-import net.java.games.input.Controller.Type;
 import net.java.games.input.ControllerEnvironment;
 
 /**
@@ -22,14 +21,14 @@ public class ControllerMaster {
 	 * Get all connected gamepads and put them in the gamepad array
 	 */
 	public static void getControllers() {
-		Controller[] controllers = ControllerEnvironment.getDefaultEnvironment().getControllers();
 		List<Controller> identifiedControllers = new ArrayList<Controller>();
+		Controller[] controllers = ControllerEnvironment.getDefaultEnvironment().getControllers();
 		System.out.println();
 		System.out.println("Controllers:");
 		for (int i = 0; i < controllers.length; i++) {
-			if (controllers[i].getType().equals(Type.GAMEPAD)) {
+			if (Boolean.parseBoolean(PropertiesFile.getProperty("controller_" + controllers[i].getName().toLowerCase() + "_usable"))) {
 				identifiedControllers.add(controllers[i]);
-				System.out.println(controllers[i].getName());
+				System.out.println(controllers[i].getName() + ": " + controllers[i].getType());
 			}
 		}
 		System.out.println();

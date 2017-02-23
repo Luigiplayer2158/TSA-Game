@@ -1,7 +1,8 @@
 package com.darkduckdevelopers.util;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 
@@ -25,93 +26,69 @@ public class LevelImporter {
 	private static HashMap<Integer, ShapeTexture> textures = new HashMap<Integer, ShapeTexture>();
 
 	public static void loadLevel(List<Entity> entities, String levelFile,
-			Loader loader, Renderer renderer) {
-		// Create a new reader
-		BufferedReader reader = null;
+			Loader loader, Renderer renderer, float unitSize, float gravity) {
+		// Input to byte array
+		levelFile = levelFile.replace('\\', '/');
+		System.out.println(levelFile);
+
+		InputStream is = null;
+		if (levelFile.startsWith("+")) {
+			is = Class.class.getResourceAsStream(levelFile.substring(1));
+		} else {
+			try {
+				is = new FileInputStream(levelFile);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		byte[] bytes = new byte[4000004];
 		try {
-			InputStreamReader isr = new InputStreamReader(
-					Class.class.getResourceAsStream(levelFile));
-			reader = new BufferedReader(isr);
-		} catch (Exception e) {
-			System.err.println("Level not found! " + levelFile);
-			return;
+			is.read(bytes);
+		} catch (IOException e) {
+			System.err.println("There was a problem reading " + levelFile
+					+ ". It's possible the file doesn't exist.");
+			e.printStackTrace();
 		}
 
-		// Read through file
-		String line = "";
-		while (line != null) {
-			try {
-				line = reader.readLine();
-			} catch (Exception e) {
-				e.printStackTrace();
-				break;
-			}
+		// Create entity for 4 bytes
+		for (int i = 0; i < bytes.length / 4; i++) {
+			int property = (bytes[i * 4]);
+			int texture = (bytes[i * 4 + 1]);
+			texture = texture | (bytes[i * 4 + 2] << 8);
+			texture = texture | (bytes[i * 4 + 3] << 16);
 
-			// Create a 9 x N 2D array and store tile information
-			char[] string_chars = line.toCharArray();
-			byte[][] bytes = new byte[string_chars.length / 9][9];
-			for (int i = 0; i < (string_chars.length / 9); i++) {
-				byte[] tile = bytes[i];
-				// X bits to Java
-				float x;
-				int x_as_int = (tile[0] & 0xFF) | ((tile[1] & 0xFF) << 8)
-						| ((tile[2] & 0xFF) << 16) | ((tile[3] & 0xFF) << 24);
-				x = Float.intBitsToFloat(x_as_int);
-				// Y bits to Java
-				float y;
-				int y_as_int = (tile[4] & 0xFF) | ((tile[5] & 0xFF) << 8)
-						| ((tile[6] & 0xFF) << 16) | ((tile[7] & 0xFF) << 24);
-				y = Float.intBitsToFloat(y_as_int);
-				// ID bits to Java
-				int id = tile[8] & 0xFF;
-
-				// Create the entity
+			if (texture > 0 && i > 0) {
+				textureLookup(texture, loader);
+				int gridX = (i - 900) / 1000;
+				int gridY = (i - 900) % 1000;
 				Entity e = new Entity();
 				TransformComponent transform = new TransformComponent(
-						new Vector2f(0.2f * x, 0.2f * y), 0f, new Vector2f(
-								0.1f, 0.1f));
-				
-				// Add specific ID components
-				e = addIdComponents(id, e, transform, loader, renderer);
-
-				// Send to entity list
+						new Vector2f(gridX * unitSize * 2, gridY * unitSize * 2),
+						0f, new Vector2f(unitSize, unitSize));
+				RenderComponent render = new RenderComponent(renderer,
+						transform, textures.get(texture), 0, true);
+				if (property < 4) {
+					CollideComponent collider = new CollideComponent(transform,
+							property, gravity, new Vector2f(unitSize, unitSize));
+					if (property == 0) {
+						collider.gravity = 0f;
+					}
+					e.addComponent(collider);
+				}
+				e.addComponent(render);
 				entities.add(e);
 			}
+
 		}
 	}
 
-	/**
-	 * KEY FOR ENTITY IDENTIFICATION
-	 * 
-	 * ID % 5 = PHYSICS TYPE ID / 5 = TEXTURE ID
-	 */
-	private static Entity addIdComponents(int id, Entity e, TransformComponent transform, Loader loader, Renderer renderer) {
-		// Parse ID into texture and physics IDs
-		int physicsType = id % 5;
-		int textureId = id / 5;
-		// Add physics component
-		if (physicsType != 4) {
-			CollideComponent collider = new CollideComponent(transform, physicsType, Float.parseFloat(PropertiesFile.getProperty("game_gravity")));
-			e.addComponent(collider);
-		}
-		// Add render component
-		RenderComponent render = new RenderComponent(renderer, transform, performTextureLookup(textureId, loader), 0, true);
-		e.addComponent(render);
-		// Return to level parser
-		return e;
-	}
-
-	private static ShapeTexture performTextureLookup(int texId, Loader loader) {
-		// Check the hashmap for an existing texture
-		if (textures.get(texId) != null) {
-			return textures.get(texId);
-		} else {
-			// Lookup texture loation from properties file and create shape texture object
-			String propertiesFileKey = ("texture_" + texId);
-			String textureLocation = PropertiesFile.getProperty(propertiesFileKey);
-			int graphicalTextureId = loader.loadTexture(textureLocation);
-			ShapeTexture texture = new ShapeTexture(graphicalTextureId);
-			return texture;
+	// Lookup a texture, if it isn't there, put one there
+	private static void textureLookup(int id, Loader loader) {
+		ShapeTexture texture = textures.get(id);
+		if (texture == null) {
+			String textureFile = PropertiesFile.getProperty("texture_" + id);
+			texture = new ShapeTexture(loader.loadTexture(textureFile));
+			textures.put(id, texture);
 		}
 	}
 
