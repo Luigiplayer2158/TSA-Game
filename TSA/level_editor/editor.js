@@ -73,8 +73,8 @@ element.onmouseleave = function(e) {
 
 element.onclick = element.onmousemove = function(event) {
     if (dragging) {
-        const xSquare = Math.floor(((event.clientX + container.scrollLeft - window.scrollX) - this.offsetLeft)/30)
-        const ySquare = Math.floor(((event.clientY + container.scrollTop) - this.offsetTop - window.scrollY)/30)
+        const xSquare = Math.floor(((event.clientX + container.scrollLeft + window.scrollX) - this.offsetLeft)/30)
+        const ySquare = Math.floor(((event.clientY + container.scrollTop) - this.offsetTop + window.scrollY)/30)
         canvas.drawImage(elements[curId], (xSquare*30)+2, (ySquare*30)+2, 27, 27)
         
         if (curId === 0) {
