@@ -109,7 +109,6 @@ document.getElementById('dropdown_2').onchange = function(e) {
 }
 
 document.getElementById("compile").onclick = function(e) {
-<<<<<<< HEAD
     console.log(used)
     const exportArr = new Uint8Array(used.length*4)
     used.map((item, ind) => {
@@ -157,19 +156,3 @@ const handleFiles = files => {
     }
     reader.readAsArrayBuffer(files[0])
 }
-=======
-    const val = new Uint32Array(1000001)
-    const test_prop = 0
-    const test_id = 127
-    val[0] = test_id
-    val[0] = val[0] << 8
-    val[0] = val[0] | test_prop
-    for (let x = 0; x < 1000; x++) {
-        for (let y = 0; y < 1000; y++) {
-            val[y+(x*1000)+1] = map[x][y]
-        }
-    }
-    location.href = URL.createObjectURL(new Blob([val.buffer],{type:'application/octet-binary'}))
-}
-
->>>>>>> 24569acf933168c332d785c8a180e1e4d19dd9ff
