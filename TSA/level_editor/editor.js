@@ -1,5 +1,8 @@
 /* global Blob URL location */
 
+// Everything is nested inside of an onload in case the JS loads faster than the HTML
+window.onload = function() {
+
 // Get the main element 
 const element = document.getElementById("main")
 
@@ -54,6 +57,20 @@ const elements = textures.map((texture, ind) => {
 
 let curId = 0;
 
+let dragging = false
+
+element.onmousedown = function(e) {
+    dragging = true
+}
+
+element.onmouseup = function(e) {
+    dragging = false
+}
+
+element.onmouseleave = function(e) {
+    dragging = false
+}
+
 element.onclick = element.onmousemove = function(event) {
     if (dragging) {
         const xSquare = Math.floor(((event.clientX + container.scrollLeft) - this.offsetLeft)/30)
@@ -83,22 +100,6 @@ element.onclick = element.onmousemove = function(event) {
         }
     }
 }
-
-let dragging = false
-
-element.onmousedown = function(e) {
-    dragging = true
-}
-
-
-element.onmouseup = function(e) {
-    dragging = false
-}
-
-element.onmouseleave = function(e) {
-    dragging = false
-}
-
 
 document.getElementById('dropdown_1').onchange = function(e) {
     curId = parseInt(e.target.value)
@@ -155,4 +156,6 @@ const handleFiles = files => {
         }
     }
     reader.readAsArrayBuffer(files[0])
+}
+
 }
