@@ -57,8 +57,7 @@ public class LevelImporter {
 				int gridX = bytes[i * 4];
 				int gridY = bytes[i * 4 + 1];
 				int property = bytes[i * 4 + 3];
-				System.out.println(gridX + "." + gridY + ": " + texture + "/" + property);
-				textureLookup(texture, loader);
+				texture = textureLookup(texture, loader);
 				Entity e = new Entity();
 				TransformComponent transform = new TransformComponent(
 						new Vector2f(gridX * unitSize * 2, gridY * unitSize * 2),
@@ -81,13 +80,24 @@ public class LevelImporter {
 	}
 
 	// Lookup a texture, if it isn't there, put one there
-	private static void textureLookup(int id, Loader loader) {
+	private static int textureLookup(int id, Loader loader) {
 		ShapeTexture texture = textures.get(id);
 		if (texture == null) {
 			String textureFile = PropertiesFile.getProperty("texture_" + id);
-			texture = new ShapeTexture(loader.loadTexture(textureFile));
-			textures.put(id, texture);
+			if (textureFile != null) {
+				texture = new ShapeTexture(loader.loadTexture(textureFile));
+				textures.put(id, texture);
+			} else {
+				// Load a null texture if the texture doesn't exit
+				id = -1;
+				if (textures.get(-1) == null) {
+					texture = new ShapeTexture(loader.loadTexture(PropertiesFile.getProperty("texture_null")));
+					textures.put(-1, texture);
+					System.out.println(texture);
+				}
+			}
 		}
+		return id;
 	}
 
 }
