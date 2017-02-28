@@ -109,7 +109,6 @@ document.getElementById('dropdown_2').onchange = function(e) {
 }
 
 document.getElementById("compile").onclick = function(e) {
-<<<<<<< HEAD
     console.log(used)
     const exportArr = new Uint8Array(used.length*4)
     used.map((item, ind) => {
@@ -127,49 +126,25 @@ const handleFiles = files => {
         const data = new Uint8Array(e.target.result)
         console.log(data)
         for (let x = 0; x < data.length; x += 4) {
-            const xSquare = Math.floor(((data[(x*4)]*30 + container.scrollLeft) - element.offsetLeft)/30)
-            const ySquare = Math.floor(((data[(x*4)+1]*30 + container.scrollTop) - element.offsetTop)/30)
-            canvas.drawImage(elements[data[(x*4)+2]], (xSquare*30)+2, (ySquare*30)+2, 27, 27)
-            
-            if (curId === 0) {
-                delete map[xSquare][length-ySquare]
-                for (let o = 0; o < used.length; o++) {
-                    if (used[o][0] === xSquare && used[o][1] === length-ySquare) {
-                        used.splice(o,1)
-                        break
-                    }
+            const xSquare = data[x]%256
+            const ySquare = data[x+1]%256
+            canvas.drawImage(elements[data[x+2]%5], (xSquare*30)+2, ((length-ySquare)*30)+2, 27, 27)
+
+            map[xSquare][length-ySquare] = { id: data[x+2], property: data[x+3]%4 }
+            let ok = true
+            for (let o = 0; o < used.length; o++) {
+                if (used[o][0] === xSquare && used[o][1] === length-ySquare) {
+                    ok = false
+                    break
                 }
-            } else {
-                map[xSquare][length-ySquare] = { id: data[(x*4)+2], property: data[(x*4)+3] }
-                let ok = true
-                for (let o = 0; o < used.length; o++) {
-                    if (used[o][0] === xSquare && used[o][1] === length-ySquare) {
-                        ok = false
-                        break
-                    }
-                }
-                if (ok === true) {
-                    used.push([xSquare, length-ySquare])
-                }
+            }
+            if (ok === true) {
+                used.push([xSquare, ySquare])
             }
     
         }
     }
     reader.readAsArrayBuffer(files[0])
 }
-=======
-    const val = new Uint32Array(1000001)
-    const test_prop = 0
-    const test_id = 127
-    val[0] = test_id
-    val[0] = val[0] << 8
-    val[0] = val[0] | test_prop
-    for (let x = 0; x < 1000; x++) {
-        for (let y = 0; y < 1000; y++) {
-            val[y+(x*1000)+1] = map[x][y]
-        }
-    }
-    location.href = URL.createObjectURL(new Blob([val.buffer],{type:'application/octet-binary'}))
-}
 
->>>>>>> 24569acf933168c332d785c8a180e1e4d19dd9ff
+
