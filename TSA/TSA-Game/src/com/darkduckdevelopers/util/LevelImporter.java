@@ -41,7 +41,7 @@ public class LevelImporter {
 				e.printStackTrace();
 			}
 		}
-		byte[] bytes = new byte[4000004];
+		byte[] bytes = new byte[256 * 256];
 		try {
 			is.read(bytes);
 		} catch (IOException e) {
@@ -52,15 +52,12 @@ public class LevelImporter {
 
 		// Create entity for 4 bytes
 		for (int i = 0; i < bytes.length / 4; i++) {
-			int property = (bytes[i * 4]);
-			int texture = (bytes[i * 4 + 1]);
-			texture = texture | (bytes[i * 4 + 2] << 8);
-			texture = texture | (bytes[i * 4 + 3] << 16);
-
-			if (texture > 0 && i > 0) {
-				textureLookup(texture, loader);
-				int gridX = (i - 900) / 1000;
-				int gridY = (i - 900) % 1000;
+			int texture = bytes[i * 4 + 2];
+			if (texture != 0) {
+				int gridX = bytes[i * 4];
+				int gridY = bytes[i * 4 + 1];
+				int property = bytes[i * 4 + 3];
+				texture = textureLookup(texture, loader);
 				Entity e = new Entity();
 				TransformComponent transform = new TransformComponent(
 						new Vector2f(gridX * unitSize * 2, gridY * unitSize * 2),
@@ -83,13 +80,24 @@ public class LevelImporter {
 	}
 
 	// Lookup a texture, if it isn't there, put one there
-	private static void textureLookup(int id, Loader loader) {
+	private static int textureLookup(int id, Loader loader) {
 		ShapeTexture texture = textures.get(id);
 		if (texture == null) {
 			String textureFile = PropertiesFile.getProperty("texture_" + id);
-			texture = new ShapeTexture(loader.loadTexture(textureFile));
-			textures.put(id, texture);
+			if (textureFile != null) {
+				texture = new ShapeTexture(loader.loadTexture(textureFile));
+				textures.put(id, texture);
+			} else {
+				// Load a null texture if the texture doesn't exit
+				id = -1;
+				if (textures.get(-1) == null) {
+					texture = new ShapeTexture(loader.loadTexture(PropertiesFile.getProperty("texture_null")));
+					textures.put(-1, texture);
+					System.out.println(texture);
+				}
+			}
 		}
+		return id;
 	}
 
 }

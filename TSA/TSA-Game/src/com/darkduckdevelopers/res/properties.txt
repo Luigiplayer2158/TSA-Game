@@ -28,6 +28,7 @@ game_2_aimDotTolerance=0.9
 game_2_aimRangeTolerance=1
 game_2_aimSelfPrevention=0.002
 
+texture_null=placeholder.png
 texture_0=dog.png
 texture_1=dirt.png
 texture_2=water.png

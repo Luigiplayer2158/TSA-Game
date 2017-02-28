@@ -3,6 +3,7 @@ package com.darkduckdevelopers.main;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -82,7 +83,7 @@ public class MainGameLoop {
 	private static void init() {
 		// Parent frame of dialog
 		JFrame dialogFrame = new JFrame();
-		
+
 		gameState = 2;
 
 		/**
@@ -90,21 +91,27 @@ public class MainGameLoop {
 		 */
 		PropertiesFile.readFile("properties.txt");
 		// Init variables
-		int displayWidth = Integer.parseInt(PropertiesFile.getProperty("display_width"));
-		int displayHeight = Integer.parseInt(PropertiesFile.getProperty("display_height"));
+		int displayWidth = Integer.parseInt(PropertiesFile
+				.getProperty("display_width"));
+		int displayHeight = Integer.parseInt(PropertiesFile
+				.getProperty("display_height"));
 		String displayName = PropertiesFile.getProperty("display_name");
 		escapeKey = Integer.parseInt(PropertiesFile.getProperty("key_escape"));
 		String shaderVertexName = PropertiesFile.getProperty("file_normalVert");
-		String shaderFragmentName = PropertiesFile.getProperty("file_normalFrag");
+		String shaderFragmentName = PropertiesFile
+				.getProperty("file_normalFrag");
 		// Global variables
-		unitSize = Float.parseFloat(PropertiesFile.getProperty("game_unitSize"));
+		unitSize = Float
+				.parseFloat(PropertiesFile.getProperty("game_unitSize"));
 		gravity = Float.parseFloat(PropertiesFile.getProperty("game_gravity"));
 		debug = Boolean.parseBoolean(PropertiesFile.getProperty("game_debug"));
 		// Splash screen
 		// TODO splash screen
-		splashTime = Float.parseFloat(PropertiesFile.getProperty("game_splashTime"));
+		splashTime = Float.parseFloat(PropertiesFile
+				.getProperty("game_splashTime"));
 		splashScreen = new Entity();
-		TransformComponent splashTransform = new TransformComponent(new Vector2f(0f, 0f), 0f, new Vector2f(1f, 1f));
+		TransformComponent splashTransform = new TransformComponent(
+				new Vector2f(0f, 0f), 0f, new Vector2f(1f, 1f));
 
 		/**
 		 * Create the gamepads and clear out values because they like to spike
@@ -113,11 +120,25 @@ public class MainGameLoop {
 		ControllerMaster.tick();
 		ControllerMaster.tick();
 
-		currentLevel = JOptionPane.showInputDialog(dialogFrame, "Enter the path to the level file");
-		
-		DisplayManager.createDisplay(displayWidth, displayHeight, displayName, false); // Create
-																						// the
-																						// display
+		/**
+		 * Get the level file, the final build will not have this
+		 */
+		JFileChooser chooser = new JFileChooser();
+		JFrame chooserParent = new JFrame();
+		while (true) {
+			int chooserStatus = chooser.showOpenDialog(chooserParent);
+			if (chooserStatus == JFileChooser.APPROVE_OPTION) {
+				currentLevel = chooser.getSelectedFile().getAbsolutePath();
+				break;
+			} else {
+				JOptionPane.showMessageDialog(chooserParent, "You need to select a level file");
+			}
+		}
+
+		DisplayManager.createDisplay(displayWidth, displayHeight, displayName,
+				false); // Create
+						// the
+						// display
 		shader = new Shader(shaderVertexName, shaderFragmentName); // Initialize
 																	// shader
 		loader = new Loader(); // Initialize loader
@@ -208,25 +229,32 @@ public class MainGameLoop {
 		for (int i = 0; i < ControllerMaster.gamepads.length + 1; i++) {
 			String playerType = "aliss";
 			Entity player = new Entity();
-			TransformComponent playerTransform = new TransformComponent(new Vector2f(0.4f, 0.6f), 0f,
-					new Vector2f(unitSize * 2, unitSize * 2));
+			TransformComponent playerTransform = new TransformComponent(
+					new Vector2f(0.4f, 0.6f), 0f, new Vector2f(unitSize * 2,
+							unitSize * 2));
 			playerTransforms[i] = playerTransform;
-			ShapeTexture playerTexture = new ShapeTexture(loader.loadTexture(playerType + ".png"));
+			ShapeTexture playerTexture = new ShapeTexture(
+					loader.loadTexture(playerType + ".png"));
 			playerTexture.setNumberOfRows(4);
-			RenderComponent playerRender = new RenderComponent(renderer, playerTransform, playerTexture, 0, true);
-			float playerHitboxSizeX = Float
-					.parseFloat(PropertiesFile.getProperty("game_" + playerType + "_playerHitboxX"));
-			float playerHitboxSizeY = Float
-					.parseFloat(PropertiesFile.getProperty("game_" + playerType + "_playerHitboxY"));
-			CollideComponent playerCollider = new CollideComponent(playerTransform, 1, -2f,
-					new Vector2f(playerHitboxSizeX * unitSize, playerHitboxSizeY * unitSize));
+			RenderComponent playerRender = new RenderComponent(renderer,
+					playerTransform, playerTexture, 0, true);
+			float playerHitboxSizeX = Float.parseFloat(PropertiesFile
+					.getProperty("game_" + playerType + "_playerHitboxX"));
+			float playerHitboxSizeY = Float.parseFloat(PropertiesFile
+					.getProperty("game_" + playerType + "_playerHitboxY"));
+			CollideComponent playerCollider = new CollideComponent(
+					playerTransform, 1, -2f, new Vector2f(playerHitboxSizeX
+							* unitSize, playerHitboxSizeY * unitSize));
 			PlayerComponent playerControl;
 			if (i > 0) {
-				playerControl = new PlayerComponent(playerCollider, ControllerMaster.gamepads[i - 1], playerRender);
+				playerControl = new PlayerComponent(playerCollider,
+						ControllerMaster.gamepads[i - 1], playerRender);
 			} else {
-				playerControl = new PlayerComponent(playerCollider, null, playerRender);
+				playerControl = new PlayerComponent(playerCollider, null,
+						playerRender);
 			}
-			TargetableComponent playerTargetable = new TargetableComponent(playerTransform, 1);
+			TargetableComponent playerTargetable = new TargetableComponent(
+					playerTransform, 1);
 			player.addComponent(playerRender);
 			player.addComponent(playerControl);
 			player.addComponent(playerCollider);
@@ -255,40 +283,51 @@ public class MainGameLoop {
 
 		/* Camera entity */
 		Entity gameCamera = new Entity();
-		TransformComponent cameraTransform = new TransformComponent(new Vector2f(0f, 0f), 0f, new Vector2f(1f, 1f));
-		CameraComponent cameraComp = new CameraComponent(cameraTransform, renderer);
+		TransformComponent cameraTransform = new TransformComponent(
+				new Vector2f(0f, 0f), 0f, new Vector2f(1f, 1f));
+		CameraComponent cameraComp = new CameraComponent(cameraTransform,
+				renderer);
 		cameraComp.tick();
 		gameCamera.addComponent(cameraComp);
 		permanantGameEntities.add(gameCamera);
-		AverageAnchorComponent cameraAnchor = new AverageAnchorComponent(cameraTransform, playerTransforms);
+		AverageAnchorComponent cameraAnchor = new AverageAnchorComponent(
+				cameraTransform, playerTransforms);
 		gameCamera.addComponent(cameraAnchor);
 	}
 
 	private static void initTemporaryEntities(String levelFile) {
-		LevelImporter.loadLevel(temporaryGameEntities, levelFile, loader, renderer, unitSize, gravity);
+		LevelImporter.loadLevel(temporaryGameEntities, levelFile, loader,
+				renderer, unitSize, gravity);
 	}
 
 	private static void initMenuEntities() {
 		/* Menu screen transformations */
 		Entity mainScreen = new Entity();
-		TransformComponent mainScreenTransform = new TransformComponent(new Vector2f(0f, 0f), 0f, new Vector2f(1f, 1f));
-		TargetableComponent mainScreenTargetable = new TargetableComponent(mainScreenTransform, 0);
+		TransformComponent mainScreenTransform = new TransformComponent(
+				new Vector2f(0f, 0f), 0f, new Vector2f(1f, 1f));
+		TargetableComponent mainScreenTargetable = new TargetableComponent(
+				mainScreenTransform, 0);
 		mainScreen.addComponent(mainScreenTargetable);
 		menuEntities.add(mainScreen);
 
 		Entity optionsScreen = new Entity();
-		TransformComponent optionsScreenTransform = new TransformComponent(new Vector2f(-2f, 0f), 0f,
-				new Vector2f(1f, 1f));
-		TargetableComponent optionsScreenTargetable = new TargetableComponent(optionsScreenTransform, 0);
+		TransformComponent optionsScreenTransform = new TransformComponent(
+				new Vector2f(-2f, 0f), 0f, new Vector2f(1f, 1f));
+		TargetableComponent optionsScreenTargetable = new TargetableComponent(
+				optionsScreenTransform, 0);
 		optionsScreen.addComponent(optionsScreenTargetable);
 		menuEntities.add(optionsScreen);
 
 		/* Camera entity */
 		Entity menuCamera = new Entity();
-		TransformComponent cameraTransform = new TransformComponent(new Vector2f(0f, 0f), 0f, new Vector2f(1f, 1f));
-		CameraComponent cameraComp = new CameraComponent(cameraTransform, renderer);
-		FollowerComponent cameraFollower = new FollowerComponent(cameraTransform, mainScreenTransform);
-		AutoTargetComponent cameraControl = new AutoTargetComponent(cameraFollower, null, 0);
+		TransformComponent cameraTransform = new TransformComponent(
+				new Vector2f(0f, 0f), 0f, new Vector2f(1f, 1f));
+		CameraComponent cameraComp = new CameraComponent(cameraTransform,
+				renderer);
+		FollowerComponent cameraFollower = new FollowerComponent(
+				cameraTransform, mainScreenTransform);
+		AutoTargetComponent cameraControl = new AutoTargetComponent(
+				cameraFollower, null, 0);
 		menuCamera.addComponent(cameraComp);
 		menuCamera.addComponent(cameraFollower);
 		menuCamera.addComponent(cameraControl);
@@ -296,42 +335,51 @@ public class MainGameLoop {
 
 		/* Main menu screen */
 		Entity title = new Entity();
-		TransformComponent titleTransform = new TransformComponent(new Vector2f(0f, 0.5f), 0f,
-				new Vector2f(unitSize * 8f, unitSize * 8f));
-		RenderComponent titleRender = new RenderComponent(renderer, titleTransform,
-				new ShapeTexture(loader.loadTexture("title.png")), 0, true);
+		TransformComponent titleTransform = new TransformComponent(
+				new Vector2f(0f, 0.5f), 0f, new Vector2f(unitSize * 8f,
+						unitSize * 8f));
+		RenderComponent titleRender = new RenderComponent(renderer,
+				titleTransform, new ShapeTexture(
+						loader.loadTexture("title.png")), 0, true);
 		title.addComponent(titleRender);
 		menuEntities.add(title);
 
 		// Main menu buttons
 		Entity playButtonTarget = new Entity();
-		TransformComponent playButtonTargetTransform = new TransformComponent(new Vector2f(-unitSize * 2f, unitSize),
-				0f, new Vector2f(1f, 1f));
-		MenuTargetableComponent playButtonTargetable = new MenuTargetableComponent(playButtonTargetTransform, 2, 0);
+		TransformComponent playButtonTargetTransform = new TransformComponent(
+				new Vector2f(-unitSize * 2f, unitSize), 0f,
+				new Vector2f(1f, 1f));
+		MenuTargetableComponent playButtonTargetable = new MenuTargetableComponent(
+				playButtonTargetTransform, 2, 0);
 		playButtonTarget.addComponent(playButtonTargetable);
 		menuEntities.add(playButtonTarget);
 
-		textMaster.drawText("PLAY", unitSize / 2f, -unitSize / 2f, unitSize, true, -1, 100, menuEntities);
+		textMaster.drawText("PLAY", unitSize / 2f, -unitSize / 2f, unitSize,
+				true, -1, 100, menuEntities);
 
 		Entity quitButtonTarget = new Entity();
-		TransformComponent quitButtonTargetTransform = new TransformComponent(new Vector2f(-unitSize * 2f, 0f), 0f,
-				new Vector2f(1f, 1f));
-		MenuTargetableComponent quitButtonTargetable = new MenuTargetableComponent(quitButtonTargetTransform, 2, 1);
+		TransformComponent quitButtonTargetTransform = new TransformComponent(
+				new Vector2f(-unitSize * 2f, 0f), 0f, new Vector2f(1f, 1f));
+		MenuTargetableComponent quitButtonTargetable = new MenuTargetableComponent(
+				quitButtonTargetTransform, 2, 1);
 		quitButtonTarget.addComponent(quitButtonTargetable);
 		menuEntities.add(quitButtonTarget);
 
-		textMaster.drawText("QUIT", unitSize / 2f, -unitSize / 2f, 0f, true, -1, 100, menuEntities);
+		textMaster.drawText("QUIT", unitSize / 2f, -unitSize / 2f, 0f, true,
+				-1, 100, menuEntities);
 
 		// Main menu targeter
 		Entity buttonTargeter = new Entity();
-		TransformComponent buttonTargeterTransform = new TransformComponent(new Vector2f(-unitSize * 2f, unitSize), 0f,
-				new Vector2f(unitSize / 2f, unitSize / 2f));
-		FollowerComponent buttonTargeterFollower = new FollowerComponent(buttonTargeterTransform,
-				playButtonTargetTransform);
-		MenuOptionScrollerComponent buttonTargeterAimer = new MenuOptionScrollerComponent(buttonTargeterFollower, null,
-				2);
-		RenderComponent buttonTargeterRender = new RenderComponent(renderer, buttonTargeterTransform,
-				new ShapeTexture(loader.loadTexture("fireball.png")), 0, true);
+		TransformComponent buttonTargeterTransform = new TransformComponent(
+				new Vector2f(-unitSize * 2f, unitSize), 0f, new Vector2f(
+						unitSize / 2f, unitSize / 2f));
+		FollowerComponent buttonTargeterFollower = new FollowerComponent(
+				buttonTargeterTransform, playButtonTargetTransform);
+		MenuOptionScrollerComponent buttonTargeterAimer = new MenuOptionScrollerComponent(
+				buttonTargeterFollower, null, 2);
+		RenderComponent buttonTargeterRender = new RenderComponent(renderer,
+				buttonTargeterTransform, new ShapeTexture(
+						loader.loadTexture("fireball.png")), 0, true);
 		buttonTargeter.addComponent(buttonTargeterFollower);
 		buttonTargeter.addComponent(buttonTargeterAimer);
 		buttonTargeter.addComponent(buttonTargeterRender);
@@ -339,10 +387,12 @@ public class MainGameLoop {
 
 		/* Options menu screen */
 		Entity optionsTitle = new Entity();
-		TransformComponent optionsTitleTransform = new TransformComponent(new Vector2f(-2f, 0.5f), 0f,
-				new Vector2f(unitSize * 8f, unitSize * 8f));
-		RenderComponent optionsTitleRender = new RenderComponent(renderer, optionsTitleTransform,
-				new ShapeTexture(loader.loadTexture("title.png")), 0, true);
+		TransformComponent optionsTitleTransform = new TransformComponent(
+				new Vector2f(-2f, 0.5f), 0f, new Vector2f(unitSize * 8f,
+						unitSize * 8f));
+		RenderComponent optionsTitleRender = new RenderComponent(renderer,
+				optionsTitleTransform, new ShapeTexture(
+						loader.loadTexture("title.png")), 0, true);
 		optionsTitle.addComponent(optionsTitleRender);
 		menuEntities.add(optionsTitle);
 	}
